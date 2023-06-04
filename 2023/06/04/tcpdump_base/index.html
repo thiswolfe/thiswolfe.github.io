@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"show_result":"default","style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="tcpdump 是Linux系统下的一个强大的命令，可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcpdump的使用">
+<meta property="og:url" content="http://example.com/2023/06/04/tcpdump_base/index.html">
+<meta property="og:site_name" content="WEYCAT">
+<meta property="og:description" content="tcpdump 是Linux系统下的一个强大的命令，可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-04T12:39:41.995Z">
+<meta property="article:modified_time" content="2023-06-04T12:52:21.060Z">
+<meta property="article:author" content="十九号快递员">
+<meta property="article:tag" content="tcpdump">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/06/04/tcpdump_base/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/04/tcpdump_base/","path":"2023/06/04/tcpdump_base/","title":"tcpdump的使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>tcpdump的使用 | WEYCAT</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WEYCAT</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">参数介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%91%BD%E4%BB%A4"><span class="nav-number">2.</span> <span class="nav-text">简单命令</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="十九号快递员"
+      src="https://avatars.githubusercontent.com/u/46558558?v=4">
+  <p class="site-author-name" itemprop="name">十九号快递员</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.baidu.com/" title="https:&#x2F;&#x2F;www.baidu.com" rel="noopener" target="_blank">Baidu</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.bing.com/" title="https:&#x2F;&#x2F;www.bing.com" rel="noopener" target="_blank">Bing</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/04/tcpdump_base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/46558558?v=4">
+      <meta itemprop="name" content="十九号快递员">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WEYCAT">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="tcpdump的使用 | WEYCAT">
+      <meta itemprop="description" content="tcpdump 是Linux系统下的一个强大的命令，可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          tcpdump的使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-06-04 20:39:41 / 修改时间：20:52:21" itemprop="dateCreated datePublished" datetime="2023-06-04T20:39:41+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux-tools/" itemprop="url" rel="index"><span itemprop="name">linux-tools</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">tcpdump 是Linux系统下的一个强大的命令，可以将网络中传送的数据包完全截获下来提供分析。它支持针对网络层、协议、主机、网络或端口的过滤，并提供and、or、not等逻辑语句来帮助你去掉无用的信息。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>tcpdump和ethereal可以用来获取和分析网络通讯活动，他们都是使用libpcap库来捕获网络封包的。在混杂模式下他们可以监控网络适配器的所有通讯活动并捕获网卡所接收的所有帧。要想设置网络接口为混杂模式并执行这些命令来捕获所有的网络封包，需要具有超级用户的权限。你可以使用这些工具来探究网络相关问题。你可以发现TCP&#x2F;IP重发、窗口大小的缩放、名字解析的问题、网络配置错误等。</p>
+<p>注意这些工具只能监控网络适配器所接收到的帧，并不能监控到整个网络的通讯情况。</p>
+<h1 id="参数介绍"><a href="#参数介绍" class="headerlink" title="参数介绍"></a>参数介绍</h1><ul>
+<li>A 以ASCII格式打印出所有分组，并将链路层的头最小化。</li>
+<li>c 在收到指定的数量的分组后，tcpdump就会停止。</li>
+<li>C 在将一个原始分组写入文件之前，检查文件当前的大小是否超过了参数 file_size 中指定的大小。如果超过了指定大小，则关闭当前文件，然后在打开一个新的文件。参数 file_size 的单位是兆字节（是1,000,000字节，而不是1,048,576字节）。</li>
+<li>d 将匹配信息包的代码以人们能够理解的汇编格式给出。</li>
+<li>dd 将匹配信息包的代码以c语言程序段的格式给出。</li>
+<li>ddd 将匹配信息包的代码以十进制的形式给出。</li>
+<li>D 打印出系统中所有可以用tcpdump截包的网络接口。</li>
+<li>e 在输出行打印出数据链路层的头部信息。</li>
+<li>E 用spi<a href="notion://www.notion.so/ipaddr">@ipaddr</a>  algo:secret解密那些以addr作为地址，并且包含了安全参数索引值spi的IPsec ESP分组。</li>
+<li>f 将外部的Internet地址以数字的形式打印出来。</li>
+<li>F 从指定的文件中读取表达式，忽略命令行中给出的表达式。</li>
+<li>i 指定监听的网络接口。</li>
+<li>l 使标准输出变为缓冲行形式。</li>
+<li>L 列出网络接口的已知数据链路。</li>
+<li>m 从文件module中导入SMI MIB模块定义。该参数可以被使用多次，以导入多个MIB模块。</li>
+<li>M 如果tcp报文中存在TCP-MD5选项，则需要用secret作为共享的验证码用于验证TCP-MD5选选项摘要（详情可参考RFC 2385）。</li>
+<li>n 不把网络地址转换成名字。</li>
+<li>N 不输出主机名中的域名部分。例如，link.linux265.com 只输出link。</li>
+<li>t 在输出的每一行不打印时间戳。</li>
+<li>O 不运行分组分组匹配（packet-matching）代码优化程序。</li>
+<li>P 不将网络接口设置成混杂模式。</li>
+<li>q 快速输出。只输出较少的协议信息。</li>
+<li>r 从指定的文件中读取包(这些包一般通过-w选项产生)。</li>
+<li>S 将tcp的序列号以绝对值形式输出，而不是相对值。</li>
+<li>s 从每个分组中读取最开始的snaplen个字节，而不是默认的68个字节。</li>
+<li>T 将监听到的包直接解释为指定的类型的报文，常见的类型有rpc远程过程调用）和snmp（简单网络管理协议；）。</li>
+<li>t 不在每一行中输出时间戳。</li>
+<li>tt 在每一行中输出非格式化的时间戳。</li>
+<li>ttt 输出本行和前面一行之间的时间差。</li>
+<li>tttt 在每一行中输出由date处理的默认格式的时间戳。</li>
+<li>u 输出未解码的NFS句柄。</li>
+<li>v 输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息。</li>
+<li>vv 输出详细的报文信息。</li>
+<li>w 直接将分组写入文件中，而不是不分析并打印出来。</li>
+<li>x 以16进制数形式显示每一个报文 (去掉链路层报头) . 可以显示较小的完整报文, 否则只显示snaplen个字节.</li>
+<li>xx 以16进制数形式显示每一个报文（包含链路层包头）。</li>
+<li>X 以16进制和ASCII码形式显示每个报文（去掉链路层报头）。</li>
+<li>XX 以16进制和ASCII吗形式显示每个报文（包含链路层报头）。</li>
+<li>y 设置tcpdump 捕获数据链路层协议类型</li>
+<li>Z 使tcpdump 放弃自己的超级权限(如果以root用户启动tcpdump, tcpdump将会有超级用户权限), 并把当前tcpdump的用户ID设置为user, 组ID设置为user首要所属组的ID</li>
+</ul>
+<h1 id="简单命令"><a href="#简单命令" class="headerlink" title="简单命令"></a>简单命令</h1><p>01、抓取所有网络包，并在terminal中显示抓取的结果，将包以十六进制的形式显示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump</span><br></pre></td></tr></table></figure>
+
+<p>02、抓取所有的网络包，并存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>03、抓取所有的经过eth0网卡的网络包，并存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>04、抓取源地址是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump src host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>05、抓取地址包含是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>06、抓取目的地址包含是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump dest host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>07、抓取主机地址为 192.168.1.100 的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>08、抓取包含192.168.1.0&#x2F;24网段的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn net 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+
+<p>09、抓取网卡eth0上所有包含端口22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn port 22</span><br></pre></td></tr></table></figure>
+
+<p>10、抓取指定协议格式的数据包，协议格式可以是「udp,icmp,arp,ip」中的任何一种,例如以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump udp  -i eth0 -vnn</span><br></pre></td></tr></table></figure>
+
+<p>11、抓取经过 eth0 网卡的源 ip 是 192.168.1.100 数据包，src参数表示源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>12、抓取经过 eth0 网卡目的 ip 是 192.168.1.100 数据包，dst参数表示目的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn dst host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>13、抓取源端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src port 22</span><br></pre></td></tr></table></figure>
+
+<p>14、抓取源ip是 192.168.1.100 且目的ip端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 and dst port 22</span><br></pre></td></tr></table></figure>
+
+<p>15、抓取源ip是192.168.1.100或者包含端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 or port 22</span><br></pre></td></tr></table></figure>
+
+<p>16、抓取源ip是192.168.1.100且端口不是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 and not port 22</span><br></pre></td></tr></table></figure>
+
+<p>17、抓取源ip是192.168.1.100且目的端口是22，或源ip是192.168.1.102且目的端口是80的数据包。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn ( src host 192.168.1.100 and dst port 22 ) or ( src host 192.168.1.102 and dst port 80 )</span><br></pre></td></tr></table></figure>
+
+<p>18、把抓取的数据包记录存到&#x2F;tmp&#x2F;result文件中，当抓取100个数据包后就退出程序。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump –i eth0 -vnn -w /tmp/result -c 100</span><br></pre></td></tr></table></figure>
+
+<p>19、从&#x2F;tmp&#x2F;result记录中读取tcp协议的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0  tcp  -vnn -r /tmp/result</span><br></pre></td></tr></table></figure>
+
+<p>20、想要截获所有192.168.1.100 的主机收到的和发出的所有的数据包：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>21、如果想要获取主机192.168.1.100除了和主机192.168.1.101之外所有主机通信的ip包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump ip host 192.168.1.100 and ! 192.168.1.101</span><br></pre></td></tr></table></figure>
+
+<p>22、如果想要获取主机 192.168.1.100 接收或发出的 telnet 包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump tcp port 23 host192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>23、 以十六进制的形式显示数据包中的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -X -r a.cap</span><br></pre></td></tr></table></figure>
+
+<p>24、以ASCII码的形式进行显示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -A -r a.cap</span><br></pre></td></tr></table></figure>
+
+<p>25、 以十六进制的形式截获数据包并保存到 a.cap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -X -w a.cap</span><br></pre></td></tr></table></figure>
+
+<p>24、以ASCII码的形式截获数据包并保存到 a.cap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -A -w a.cap</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tcpdump/" rel="tag"># tcpdump</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/04/tmux_base/" rel="prev" title="tmux的使用">
+                  <i class="fa fa-chevron-left"></i> tmux的使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/04/shell_command/" rel="next" title="一些基础shell命令">
+                  一些基础shell命令 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备15059731号 </a>
+      <img src="http://www.beian.gov.cn/portal/download" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=%E4%BA%ACICP%E5%A4%8715059731%E5%8F%B7-1" rel="noopener" target="_blank">京ICP备15059731号-1 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十九号快递员</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

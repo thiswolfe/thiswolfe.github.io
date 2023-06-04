@@ -19,23 +19,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"show_result":"default","style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:title" content="WEYCAT">
-<meta property="og:url" content="http://example.com/archives/2023/05/index.html">
+    <meta name="description" content="关于 Linux 防火墙 iptables&#x2F;firewall 的一些设置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables&#x2F;firewall 防火墙">
+<meta property="og:url" content="http://example.com/2023/06/04/firewall_setting/index.html">
 <meta property="og:site_name" content="WEYCAT">
+<meta property="og:description" content="关于 Linux 防火墙 iptables&#x2F;firewall 的一些设置">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-04T12:27:36.435Z">
+<meta property="article:modified_time" content="2023-06-04T12:53:32.316Z">
 <meta property="article:author" content="十九号快递员">
+<meta property="article:tag" content="iptables">
+<meta property="article:tag" content="firewall">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/archives/2023/05/">
+<link rel="canonical" href="http://example.com/2023/06/04/firewall_setting/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"archives/2023/05/index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/04/firewall_setting/","path":"2023/06/04/firewall_setting/","title":"iptables/firewall 防火墙"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>归档 | WEYCAT</title>
+<title>iptables/firewall 防火墙 | WEYCAT</title>
   
 
 
@@ -68,7 +74,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">WEYCAT</h1>
+      <p class="site-title">WEYCAT</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -121,7 +127,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -134,6 +140,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99-iptables"><span class="nav-number">1.</span> <span class="nav-text">防火墙 iptables</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E7%81%AB%E5%A2%99-firewall"><span class="nav-number">2.</span> <span class="nav-text">防火墙 firewall</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -193,49 +200,141 @@
 
     </div>
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
 
 
   
-  
-  
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 9 篇日志。 继续努力。</span>
-      </div>
 
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/04/firewall_setting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/46558558?v=4">
+      <meta itemprop="name" content="十九号快递员">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WEYCAT">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="iptables/firewall 防火墙 | WEYCAT">
+      <meta itemprop="description" content="关于 Linux 防火墙 iptables/firewall 的一些设置">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iptables/firewall 防火墙
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
       
-    <div class="collection-year">
-      <span class="collection-header">2023</span>
+
+      <time title="创建时间：2023-06-04 20:27:36 / 修改时间：20:53:32" itemprop="dateCreated datePublished" datetime="2023-06-04T20:27:36+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux-tools/" itemprop="url" rel="index"><span itemprop="name">linux-tools</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/linux-tools/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">关于 Linux 防火墙 iptables/firewall 的一些设置</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="防火墙-iptables"><a href="#防火墙-iptables" class="headerlink" title="防火墙 iptables"></a>防火墙 iptables</h1><p>查看所有规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -L -n</span><br></pre></td></tr></table></figure>
+
+<p>添加规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p tcp --sport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p udp --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p udp --sport 8080 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-A , 就是添加新的规则</li>
+<li>-p tcp , udp 就写 udp，tcp 就用 tcp</li>
+<li>–dport , 就是目标端口 当数据从外部进入服务器为目标端口</li>
+<li>–sport , 数据从服务器出去 则为数据源端口</li>
+<li>-j , 就是指定是 ACCEPT 接收 或者 DROP 不接收使用 <code>service iptables save</code> 进行保存如果出现 找不到 iptables.services 安装 iptables-services <code>sudo yum install iptables-services</code></li>
+</ul>
+<h1 id="防火墙-firewall"><a href="#防火墙-firewall" class="headerlink" title="防火墙 firewall"></a>防火墙 firewall</h1><p>使用防火墙firewall 的设置</p>
+<p>开启端口 2323</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --add-port=2323/tcp --permanent</span><br><span class="line">firewall-cmd --zone=public --add-port=2323/udp --permanent</span><br></pre></td></tr></table></figure>
+
+<p>查看所有开放端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-ports</span><br></pre></td></tr></table></figure>
+
+<p>更新防火墙规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<p>查看防火墙状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status firewalld</span><br></pre></td></tr></table></figure>
+
+<p>关闭防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br></pre></td></tr></table></figure>
+
+<p>开启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start firewalld</span><br></pre></td></tr></table></figure>
+
+<p>重启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart firewalld</span><br></pre></td></tr></table></figure>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2023-05-26T21:09:58+08:00"
-              content="2023-05-26">
-          05-26
-        </time>
-      </div>
+    
+    
+    
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2023/05/26/hello-world/" itemprop="url">
-            <span itemprop="name">Hello World</span>
-          </a>
-      </div>
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/iptables/" rel="tag"># iptables</a>
+              <a href="/tags/firewall/" rel="tag"># firewall</a>
+          </div>
 
-      
-    </header>
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/04/tomcat_base/" rel="prev" title="Tomcat的使用">
+                  <i class="fa fa-chevron-left"></i> Tomcat的使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/04/Docker_base/" rel="next" title="Docker的使用">
+                  Docker的使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
   </article>
+</div>
 
 
-    </div>
-  </div>
-  
-  
-  
+
+
+
 
 </div>
   </main>

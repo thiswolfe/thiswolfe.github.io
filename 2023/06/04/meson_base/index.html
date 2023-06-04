@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"show_result":"default","style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="meson是一个构建系统，类似于 CMake 或者GNU Autotools. meson只是负责配置构建，后台默认是用ninja来编译的(当然也支持其它后台)。ninja是一个小型的致力于编译速度优化的编译系统，相当于make的替代物。所以meson+ninja相当于Cmake+make。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="meson 的基础使用">
+<meta property="og:url" content="http://example.com/2023/06/04/meson_base/index.html">
+<meta property="og:site_name" content="WEYCAT">
+<meta property="og:description" content="meson是一个构建系统，类似于 CMake 或者GNU Autotools. meson只是负责配置构建，后台默认是用ninja来编译的(当然也支持其它后台)。ninja是一个小型的致力于编译速度优化的编译系统，相当于make的替代物。所以meson+ninja相当于Cmake+make。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-04T12:23:30.629Z">
+<meta property="article:modified_time" content="2023-06-04T12:53:05.205Z">
+<meta property="article:author" content="十九号快递员">
+<meta property="article:tag" content="meson">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/06/04/meson_base/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/04/meson_base/","path":"2023/06/04/meson_base/","title":"meson 的基础使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>meson 的基础使用 | WEYCAT</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WEYCAT</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MESON-%E6%9E%84%E5%BB%BA%E7%A8%8B%E5%BA%8F-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">MESON 构建程序-最简单的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#meson-%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">meson 的基本介绍</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.</span> <span class="nav-text">构建执行程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E5%BA%93%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">构建库文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B3%BB%E7%BB%9F%E5%BA%93%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">使用系统库文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">使用第三方库文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%881"><span class="nav-number">2.3.1.</span> <span class="nav-text">方案1</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C"><span class="nav-number">2.4.</span> <span class="nav-text">方案二</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="十九号快递员"
+      src="https://avatars.githubusercontent.com/u/46558558?v=4">
+  <p class="site-author-name" itemprop="name">十九号快递员</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.baidu.com/" title="https:&#x2F;&#x2F;www.baidu.com" rel="noopener" target="_blank">Baidu</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.bing.com/" title="https:&#x2F;&#x2F;www.bing.com" rel="noopener" target="_blank">Bing</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/04/meson_base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/46558558?v=4">
+      <meta itemprop="name" content="十九号快递员">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WEYCAT">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="meson 的基础使用 | WEYCAT">
+      <meta itemprop="description" content="meson是一个构建系统，类似于 CMake 或者GNU Autotools. meson只是负责配置构建，后台默认是用ninja来编译的(当然也支持其它后台)。ninja是一个小型的致力于编译速度优化的编译系统，相当于make的替代物。所以meson+ninja相当于Cmake+make。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          meson 的基础使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-06-04 20:23:30 / 修改时间：20:53:05" itemprop="dateCreated datePublished" datetime="2023-06-04T20:23:30+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/code/" itemprop="url" rel="index"><span itemprop="name">code</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">meson是一个构建系统，类似于 CMake 或者GNU Autotools. meson只是负责配置构建，后台默认是用ninja来编译的(当然也支持其它后台)。ninja是一个小型的致力于编译速度优化的编译系统，相当于make的替代物。所以meson+ninja相当于Cmake+make。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="MESON-构建程序-最简单的使用"><a href="#MESON-构建程序-最简单的使用" class="headerlink" title="MESON 构建程序-最简单的使用"></a>MESON 构建程序-最简单的使用</h1><h2 id="meson-的基本介绍"><a href="#meson-的基本介绍" class="headerlink" title="meson 的基本介绍"></a><strong>meson 的基本介绍</strong></h2><p>Meson 是基于python3实现，至少需要 python3.5+ 才能运行，默认采用ninja作为后端。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python3 python3-pip ninja-build</span><br><span class="line">sudo pip3 install meson ninja</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查看meson内置的选项、默认值及可选值</span><br><span class="line">meson configure</span><br><span class="line">meson build</span><br><span class="line"># 进入到meson的构建目录执行:</span><br><span class="line">meson compile 或者 ninja</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 在生成编译配置时，可以通过 -D 指定编译选项</span><br><span class="line">meson builddir -Dprefix=/usr -Dgtk_doc=disabled -Dtests=disabled</span><br><span class="line">cd builddir &amp;&amp; ninja -j8</span><br><span class="line">meson install</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 在源码根目录通过 configure更新编译选项</span><br><span class="line">meson configure builddir -Dprefix=/home/dev/tmp</span><br></pre></td></tr></table></figure>
+
+<p>可以通过以下命令取得一个工程示例。该示例会生成一个 testproject.c、meson.build：<br>meson init –name testproject</p>
+<h1 id="构建执行程序"><a href="#构建执行程序" class="headerlink" title="构建执行程序"></a><strong>构建执行程序</strong></h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char **argv) &#123;</span><br><span class="line">    printf(&quot;Hello meson！.\n&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;tutorial&#x27;, &#x27;c&#x27;)</span><br><span class="line">executable(&#x27;demo&#x27;, &#x27;main.c&#x27;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建库文件"><a href="#构建库文件" class="headerlink" title="构建库文件"></a><strong>构建库文件</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">shared_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"># static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── meson.build</span><br><span class="line">├── test.c</span><br><span class="line">└── test.h</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用系统库文件"><a href="#使用系统库文件" class="headerlink" title="使用系统库文件"></a><strong>使用系统库文件</strong></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;pthread.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char * argv[]) &#123;</span><br><span class="line">    pthread_t a = pthread_self();;</span><br><span class="line">    printf(&quot;demo using pthread, id[%ld].\n&quot;, a);</span><br><span class="line">    return a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;uselib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">cc = meson.get_compiler(&#x27;c&#x27;)</span><br><span class="line"># cxx = meson.get_compiler(&#x27;cpp&#x27;)</span><br><span class="line"></span><br><span class="line">libpthread = cc.find_library(&#x27;pthread&#x27;, required : true)</span><br><span class="line"></span><br><span class="line">executable(</span><br><span class="line">    &#x27;main&#x27;,</span><br><span class="line">    &#x27;main.c&#x27;,</span><br><span class="line">    dependencies: [libpthread],</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用第三方库文件"><a href="#使用第三方库文件" class="headerlink" title="使用第三方库文件"></a><strong>使用第三方库文件</strong></h2><h3 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a><strong>方案1</strong></h3><p>根据文件位置引用。注意：需要先生成lib文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello project main lib\n&quot;);</span><br><span class="line">    info_print();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line"># 这个没测试过呢</span><br><span class="line"># pkg = import(&#x27;pkgconfig&#x27;)</span><br><span class="line"># pkg.generate(libraries : testlib,</span><br><span class="line">#              subdirs : [&#x27;lib&#x27;],</span><br><span class="line">#              version : &#x27;1.0&#x27;,</span><br><span class="line">#              name : &#x27;testlib&#x27;,</span><br><span class="line">#              filebase : &#x27;testlib&#x27;,</span><br><span class="line">#              description : &#x27;testlib info&#x27;)</span><br><span class="line"></span><br><span class="line">testlib = shared_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"># testlib = static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"></span><br><span class="line">database_app_dep = declare_dependency(</span><br><span class="line">  link_with : [</span><br><span class="line">    testlib,</span><br><span class="line">  ],</span><br><span class="line">  include_directories : [</span><br><span class="line">    &#x27;.&#x27;</span><br><span class="line">  ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;main&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">cc = meson.get_compiler(&#x27;c&#x27;)</span><br><span class="line">testlib = cc.find_library(&#x27;testlib&#x27;,</span><br><span class="line">                          dirs : [ &#x27;/home/zero/Desktop/test/meson_demo/extlib/origin/lib/&#x27; ])</span><br><span class="line">testinc = include_directories(&#x27;./lib/&#x27;)</span><br><span class="line"></span><br><span class="line">executable(&#x27;main&#x27;, &#x27;main.c&#x27;,</span><br><span class="line">           dependencies: [testlib],</span><br><span class="line">           include_directories:testinc)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── lib</span><br><span class="line">│   ├── meson.build</span><br><span class="line">│   ├── test.c</span><br><span class="line">│   └── test.h</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a><strong>方案二</strong></h2><p>通过 pkg-config 使用第三方库，主要步骤参考 run.sh 。<br>注意：需要先生成库文件，并安装到 pkg-config 中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello project main lib\n&quot;);</span><br><span class="line">    info_print();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line"># 没测试过</span><br><span class="line"># Create a pkg file</span><br><span class="line"># pkg = import(&#x27;pkgconfig&#x27;)</span><br><span class="line"># pkg.generate(libraries : testlib,</span><br><span class="line">#              subdirs : [&#x27;lib&#x27;],</span><br><span class="line">#              version : &#x27;1.0&#x27;,</span><br><span class="line">#              name : &#x27;testlib&#x27;,</span><br><span class="line">#              filebase : &#x27;testlib&#x27;,</span><br><span class="line">#              description : &#x27;testlib info&#x27;)</span><br><span class="line"></span><br><span class="line"># install dir</span><br><span class="line"># meson build --prefix=/usr</span><br><span class="line"></span><br><span class="line">testlib = shared_library(</span><br><span class="line">	      &#x27;testlib&#x27;, &#x27;test.c&#x27;,</span><br><span class="line">	      install : true</span><br><span class="line">	      )</span><br><span class="line"># testlib = static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;, install : true)</span><br><span class="line"></span><br><span class="line">database_app_dep = declare_dependency(</span><br><span class="line">  link_with : [</span><br><span class="line">    testlib,</span><br><span class="line">  ],</span><br><span class="line">  include_directories : [</span><br><span class="line">    &#x27;.&#x27;</span><br><span class="line">  ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#libevent pkg-config source file</span><br><span class="line"></span><br><span class="line">prefix=/home/zero/Desktop/test/meson_demo/extlib/upgrade/lib/</span><br><span class="line">exec_prefix=$&#123;prefix&#125;</span><br><span class="line">libdir=$&#123;exec_prefix&#125;/build</span><br><span class="line">includedir=$&#123;prefix&#125;</span><br><span class="line"></span><br><span class="line">Name: libtestlib</span><br><span class="line">Description: Test library files to use</span><br><span class="line">Version: 1.1.0-stable</span><br><span class="line">Requires: libtestlib</span><br><span class="line">Conflicts:</span><br><span class="line">Libs: -L$&#123;libdir&#125; -ltestlib</span><br><span class="line">Libs.private:</span><br><span class="line">Cflags: -I$&#123;includedir&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">project(&#x27;main&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">dep = dependency(&#x27;libtestlib&#x27;)</span><br><span class="line"></span><br><span class="line">executable(&#x27;main&#x27;, &#x27;main.c&#x27;,</span><br><span class="line">           dependencies: [dep],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">#显示每一步执行的内容</span><br><span class="line">set -x</span><br><span class="line"></span><br><span class="line"># 设置当前路径为变量</span><br><span class="line">CURPATH=`pwd`</span><br><span class="line"></span><br><span class="line"># 设置环境变量并增加查找位置</span><br><span class="line">export PKG_CONFIG_PATH=$&#123;CURPATH&#125;/lib/:$PKG_CONFIG_PATH</span><br><span class="line"># 查找pkg的包内容</span><br><span class="line">pkg-config --list-all | grep testlib</span><br><span class="line"></span><br><span class="line"># meson- 构建</span><br><span class="line">meson build</span><br><span class="line"></span><br><span class="line">cd build</span><br><span class="line"></span><br><span class="line"># meson 编译</span><br><span class="line">meson compile</span><br><span class="line"></span><br><span class="line"># 执行测试</span><br><span class="line">./main</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── lib</span><br><span class="line">│   ├── libtestlib.pc</span><br><span class="line">│   ├── meson.build</span><br><span class="line">│   ├── test.c</span><br><span class="line">│   └── test.h</span><br><span class="line">├── main.c</span><br><span class="line">├── meson.build</span><br><span class="line">└── run.sh</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/meson/" rel="tag"># meson</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/26/hello-world/" rel="prev" title="Hello World">
+                  <i class="fa fa-chevron-left"></i> Hello World
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/04/tomcat_base/" rel="next" title="Tomcat的使用">
+                  Tomcat的使用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备15059731号 </a>
+      <img src="http://www.beian.gov.cn/portal/download" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=%E4%BA%ACICP%E5%A4%8715059731%E5%8F%B7-1" rel="noopener" target="_blank">京ICP备15059731号-1 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十九号快递员</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

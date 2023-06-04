@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>iptables/firewall 防火墙</title>
+    <url>/2023/06/04/firewall_setting/</url>
+    <content><![CDATA[<h1 id="防火墙-iptables"><a href="#防火墙-iptables" class="headerlink" title="防火墙 iptables"></a>防火墙 iptables</h1><p>查看所有规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">iptables -L -n</span><br></pre></td></tr></table></figure>
+
+<p>添加规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">iptables -A INPUT -p tcp --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p tcp --sport 8080 -j ACCEPT</span><br><span class="line">iptables -A INPUT -p udp --dport 8080 -j ACCEPT</span><br><span class="line">iptables -A OUTPUT -p udp --sport 8080 -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-A , 就是添加新的规则</li>
+<li>-p tcp , udp 就写 udp，tcp 就用 tcp</li>
+<li>–dport , 就是目标端口 当数据从外部进入服务器为目标端口</li>
+<li>–sport , 数据从服务器出去 则为数据源端口</li>
+<li>-j , 就是指定是 ACCEPT 接收 或者 DROP 不接收使用 <code>service iptables save</code> 进行保存如果出现 找不到 iptables.services 安装 iptables-services <code>sudo yum install iptables-services</code></li>
+</ul>
+<h1 id="防火墙-firewall"><a href="#防火墙-firewall" class="headerlink" title="防火墙 firewall"></a>防火墙 firewall</h1><p>使用防火墙firewall 的设置</p>
+<p>开启端口 2323</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">firewall-cmd --zone=public --add-port=2323/tcp --permanent</span><br><span class="line">firewall-cmd --zone=public --add-port=2323/udp --permanent</span><br></pre></td></tr></table></figure>
+
+<p>查看所有开放端口</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-ports</span><br></pre></td></tr></table></figure>
+
+<p>更新防火墙规则</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
+<p>查看防火墙状态</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl status firewalld</span><br></pre></td></tr></table></figure>
+
+<p>关闭防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl stop firewalld</span><br></pre></td></tr></table></figure>
+
+<p>开启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl start firewalld</span><br></pre></td></tr></table></figure>
+
+<p>重启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">systemctl restart firewalld</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux-tools</category>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>iptables</tag>
+        <tag>firewall</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2023/05/26/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -17,5 +63,508 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+      <tags>
+        <tag>hello</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>meson 的基础使用</title>
+    <url>/2023/06/04/meson_base/</url>
+    <content><![CDATA[<h1 id="MESON-构建程序-最简单的使用"><a href="#MESON-构建程序-最简单的使用" class="headerlink" title="MESON 构建程序-最简单的使用"></a>MESON 构建程序-最简单的使用</h1><h2 id="meson-的基本介绍"><a href="#meson-的基本介绍" class="headerlink" title="meson 的基本介绍"></a><strong>meson 的基本介绍</strong></h2><p>Meson 是基于python3实现，至少需要 python3.5+ 才能运行，默认采用ninja作为后端。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python3 python3-pip ninja-build</span><br><span class="line">sudo pip3 install meson ninja</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 查看meson内置的选项、默认值及可选值</span><br><span class="line">meson configure</span><br><span class="line">meson build</span><br><span class="line"># 进入到meson的构建目录执行:</span><br><span class="line">meson compile 或者 ninja</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 在生成编译配置时，可以通过 -D 指定编译选项</span><br><span class="line">meson builddir -Dprefix=/usr -Dgtk_doc=disabled -Dtests=disabled</span><br><span class="line">cd builddir &amp;&amp; ninja -j8</span><br><span class="line">meson install</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 在源码根目录通过 configure更新编译选项</span><br><span class="line">meson configure builddir -Dprefix=/home/dev/tmp</span><br></pre></td></tr></table></figure>
+
+<p>可以通过以下命令取得一个工程示例。该示例会生成一个 testproject.c、meson.build：<br>meson init –name testproject</p>
+<h1 id="构建执行程序"><a href="#构建执行程序" class="headerlink" title="构建执行程序"></a><strong>构建执行程序</strong></h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include&lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char **argv) &#123;</span><br><span class="line">    printf(&quot;Hello meson！.\n&quot;);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;tutorial&#x27;, &#x27;c&#x27;)</span><br><span class="line">executable(&#x27;demo&#x27;, &#x27;main.c&#x27;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="构建库文件"><a href="#构建库文件" class="headerlink" title="构建库文件"></a><strong>构建库文件</strong></h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">shared_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"># static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── meson.build</span><br><span class="line">├── test.c</span><br><span class="line">└── test.h</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用系统库文件"><a href="#使用系统库文件" class="headerlink" title="使用系统库文件"></a><strong>使用系统库文件</strong></h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;pthread.h&gt;</span><br><span class="line"></span><br><span class="line">int main(int argc, char * argv[]) &#123;</span><br><span class="line">    pthread_t a = pthread_self();;</span><br><span class="line">    printf(&quot;demo using pthread, id[%ld].\n&quot;, a);</span><br><span class="line">    return a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;uselib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">cc = meson.get_compiler(&#x27;c&#x27;)</span><br><span class="line"># cxx = meson.get_compiler(&#x27;cpp&#x27;)</span><br><span class="line"></span><br><span class="line">libpthread = cc.find_library(&#x27;pthread&#x27;, required : true)</span><br><span class="line"></span><br><span class="line">executable(</span><br><span class="line">    &#x27;main&#x27;,</span><br><span class="line">    &#x27;main.c&#x27;,</span><br><span class="line">    dependencies: [libpthread],</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用第三方库文件"><a href="#使用第三方库文件" class="headerlink" title="使用第三方库文件"></a><strong>使用第三方库文件</strong></h2><h3 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a><strong>方案1</strong></h3><p>根据文件位置引用。注意：需要先生成lib文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello project main lib\n&quot;);</span><br><span class="line">    info_print();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line"># 这个没测试过呢</span><br><span class="line"># pkg = import(&#x27;pkgconfig&#x27;)</span><br><span class="line"># pkg.generate(libraries : testlib,</span><br><span class="line">#              subdirs : [&#x27;lib&#x27;],</span><br><span class="line">#              version : &#x27;1.0&#x27;,</span><br><span class="line">#              name : &#x27;testlib&#x27;,</span><br><span class="line">#              filebase : &#x27;testlib&#x27;,</span><br><span class="line">#              description : &#x27;testlib info&#x27;)</span><br><span class="line"></span><br><span class="line">testlib = shared_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"># testlib = static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;)</span><br><span class="line"></span><br><span class="line">database_app_dep = declare_dependency(</span><br><span class="line">  link_with : [</span><br><span class="line">    testlib,</span><br><span class="line">  ],</span><br><span class="line">  include_directories : [</span><br><span class="line">    &#x27;.&#x27;</span><br><span class="line">  ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;main&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">cc = meson.get_compiler(&#x27;c&#x27;)</span><br><span class="line">testlib = cc.find_library(&#x27;testlib&#x27;,</span><br><span class="line">                          dirs : [ &#x27;/home/zero/Desktop/test/meson_demo/extlib/origin/lib/&#x27; ])</span><br><span class="line">testinc = include_directories(&#x27;./lib/&#x27;)</span><br><span class="line"></span><br><span class="line">executable(&#x27;main&#x27;, &#x27;main.c&#x27;,</span><br><span class="line">           dependencies: [testlib],</span><br><span class="line">           include_directories:testinc)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── lib</span><br><span class="line">│   ├── meson.build</span><br><span class="line">│   ├── test.c</span><br><span class="line">│   └── test.h</span><br><span class="line">├── main.c</span><br><span class="line">└── meson.build</span><br></pre></td></tr></table></figure>
+
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a><strong>方案二</strong></h2><p>通过 pkg-config 使用第三方库，主要步骤参考 run.sh 。<br>注意：需要先生成库文件，并安装到 pkg-config 中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">int main(void)</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello project main lib\n&quot;);</span><br><span class="line">    info_print();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &quot;test.h&quot;</span><br><span class="line"></span><br><span class="line">void info_print()</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;hello! this library.\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#ifndef _TEST_LIB_</span><br><span class="line">#define _TEST_LIB_</span><br><span class="line"></span><br><span class="line">void info_print();</span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;testlib&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line"># 没测试过</span><br><span class="line"># Create a pkg file</span><br><span class="line"># pkg = import(&#x27;pkgconfig&#x27;)</span><br><span class="line"># pkg.generate(libraries : testlib,</span><br><span class="line">#              subdirs : [&#x27;lib&#x27;],</span><br><span class="line">#              version : &#x27;1.0&#x27;,</span><br><span class="line">#              name : &#x27;testlib&#x27;,</span><br><span class="line">#              filebase : &#x27;testlib&#x27;,</span><br><span class="line">#              description : &#x27;testlib info&#x27;)</span><br><span class="line"></span><br><span class="line"># install dir</span><br><span class="line"># meson build --prefix=/usr</span><br><span class="line"></span><br><span class="line">testlib = shared_library(</span><br><span class="line">	      &#x27;testlib&#x27;, &#x27;test.c&#x27;,</span><br><span class="line">	      install : true</span><br><span class="line">	      )</span><br><span class="line"># testlib = static_library(&#x27;testlib&#x27;, &#x27;test.c&#x27;, install : true)</span><br><span class="line"></span><br><span class="line">database_app_dep = declare_dependency(</span><br><span class="line">  link_with : [</span><br><span class="line">    testlib,</span><br><span class="line">  ],</span><br><span class="line">  include_directories : [</span><br><span class="line">    &#x27;.&#x27;</span><br><span class="line">  ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#libevent pkg-config source file</span><br><span class="line"></span><br><span class="line">prefix=/home/zero/Desktop/test/meson_demo/extlib/upgrade/lib/</span><br><span class="line">exec_prefix=$&#123;prefix&#125;</span><br><span class="line">libdir=$&#123;exec_prefix&#125;/build</span><br><span class="line">includedir=$&#123;prefix&#125;</span><br><span class="line"></span><br><span class="line">Name: libtestlib</span><br><span class="line">Description: Test library files to use</span><br><span class="line">Version: 1.1.0-stable</span><br><span class="line">Requires: libtestlib</span><br><span class="line">Conflicts:</span><br><span class="line">Libs: -L$&#123;libdir&#125; -ltestlib</span><br><span class="line">Libs.private:</span><br><span class="line">Cflags: -I$&#123;includedir&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">project(&#x27;main&#x27;, &#x27;c&#x27;)</span><br><span class="line"></span><br><span class="line">dep = dependency(&#x27;libtestlib&#x27;)</span><br><span class="line"></span><br><span class="line">executable(&#x27;main&#x27;, &#x27;main.c&#x27;,</span><br><span class="line">           dependencies: [dep],</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">#显示每一步执行的内容</span><br><span class="line">set -x</span><br><span class="line"></span><br><span class="line"># 设置当前路径为变量</span><br><span class="line">CURPATH=`pwd`</span><br><span class="line"></span><br><span class="line"># 设置环境变量并增加查找位置</span><br><span class="line">export PKG_CONFIG_PATH=$&#123;CURPATH&#125;/lib/:$PKG_CONFIG_PATH</span><br><span class="line"># 查找pkg的包内容</span><br><span class="line">pkg-config --list-all | grep testlib</span><br><span class="line"></span><br><span class="line"># meson- 构建</span><br><span class="line">meson build</span><br><span class="line"></span><br><span class="line">cd build</span><br><span class="line"></span><br><span class="line"># meson 编译</span><br><span class="line">meson compile</span><br><span class="line"></span><br><span class="line"># 执行测试</span><br><span class="line">./main</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── lib</span><br><span class="line">│   ├── libtestlib.pc</span><br><span class="line">│   ├── meson.build</span><br><span class="line">│   ├── test.c</span><br><span class="line">│   └── test.h</span><br><span class="line">├── main.c</span><br><span class="line">├── meson.build</span><br><span class="line">└── run.sh</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>code</category>
+      </categories>
+      <tags>
+        <tag>meson</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker的使用</title>
+    <url>/2023/06/04/Docker_base/</url>
+    <content><![CDATA[<p>Docker 包括三个基本概念:</p>
+<ul>
+<li><strong>镜像（Image）</strong>：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。</li>
+<li><strong>容器（Container）</strong>：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。</li>
+<li><strong>仓库（Repository）</strong>：仓库可看成一个代码控制中心，用来保存镜像。</li>
+</ul>
+<p>Docker 使用客户端-服务器 (C&#x2F;S) 架构模式，使用远程API来管理和创建Docker容器。</p>
+<p>Docker 容器通过 Docker 镜像来创建。</p>
+<p>容器与镜像的关系类似于面向对象编程中的对象与类。</p>
+<p>其他一些说明</p>
+<p><strong>Docker Machine</strong>，是一个简化Docker安装的命令行工具，通过一个简单的命令行即可在相应的平台上安装Docker，比如VirtualBox、 Digital Ocean、Microsoft Azure。</p>
+<p><strong>Docker Registry</strong>，Docker 仓库用来保存镜像，可以理解为代码控制中的代码仓库。Docker Hub <a href="https://hub.docker.com/">https://hub.docker.com/</a> 提供了庞大的镜像集合供使用。一个 Docker Registry 中可以包含多个仓库（Repository）；每个仓库可以包含多个标签（Tag）；每个标签对应一个镜像。</p>
+<p>通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本。我们可以通过 <strong>&lt;仓库名&gt;:&lt;标签&gt;</strong> 的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 <strong>latest</strong> 作为默认标签。</p>
+<p>**Docker 主机(Host)**，一个物理或者虚拟的机器用于执行 Docker 守护进程和容器。</p>
+<p>关于安装 docker 就不说了</p>
+<h1 id="1、拉取镜像"><a href="#1、拉取镜像" class="headerlink" title="1、拉取镜像"></a>1、拉取镜像</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker pull centos:centos7</span><br></pre></td></tr></table></figure>
+
+<p>需要用sudo权限，把centos7的镜像pull到本地</p>
+<h1 id="2、查看容器和镜像"><a href="#2、查看容器和镜像" class="headerlink" title="2、查看容器和镜像"></a>2、查看容器和镜像</h1><h3 id="2-1、查看容器"><a href="#2-1、查看容器" class="headerlink" title="2.1、查看容器"></a>2.1、查看容器</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker ps -a       # 查看本地所有容器，包括已经停止运行的容器</span><br><span class="line">sudo docker ps          # 查看正在运行的容器</span><br></pre></td></tr></table></figure>
+
+<p>显示字段介绍</p>
+<ul>
+<li><strong>CONTAINER ID：</strong>容器 ID</li>
+<li><strong>IMAGE：</strong>使用的镜像</li>
+<li><strong>COMMAND：</strong>启动容器时后，容器运行的命令</li>
+<li><strong>CREATED：</strong>容器的创建时间</li>
+<li><strong>STATUS：</strong>容器状态</li>
+<li><strong>PORTS：</strong>实际运行端口，若有指定运行端口则会显示指定的端口和默认运行端口，以及连接类型( tcp &#x2F; udp )</li>
+<li><strong>NAMES：</strong>容器名字</li>
+<li><strong>SIZE：</strong>容器全部文件的总大小，也会显示容器大小</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">docker inspect [运行的容器ID]   # 查看运行的容器的IP等信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2、查看镜像"><a href="#2-2、查看镜像" class="headerlink" title="2.2、查看镜像"></a>2.2、查看镜像</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>查看本地所有镜像，显示的选项说明:</p>
+<ul>
+<li><strong>REPOSITORY：</strong>表示镜像的仓库源</li>
+<li><strong>TAG：</strong>镜像的标签</li>
+<li><strong>IMAGE ID：</strong>镜像ID</li>
+<li><strong>CREATED：</strong>镜像创建时间</li>
+<li><strong>SIZE：</strong>镜像大小</li>
+</ul>
+<h1 id="3、使用镜像"><a href="#3、使用镜像" class="headerlink" title="3、使用镜像"></a>3、使用镜像</h1><h3 id="3-1-运行镜像"><a href="#3-1-运行镜像" class="headerlink" title="3.1 运行镜像"></a>3.1 运行镜像</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker run [REPOSITORY]:[TAG] /bin/bash</span><br><span class="line">sudo docker run [IMAGE ID] /bin/bash</span><br><span class="line">sudo docker run -itd centos:centos7 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>i</strong>：交互式操作。</li>
+<li><strong>t</strong>： 终端。</li>
+<li><strong>d</strong>：后台运行。不使用-d选项，可直接进入操作，退出exit时容器立即释放</li>
+</ul>
+<h3 id="3-2-使用镜像"><a href="#3-2-使用镜像" class="headerlink" title="3.2 使用镜像"></a>3.2 使用镜像</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker exec -it [REPOSITORY]:[TAG] /bin/bash</span><br><span class="line">sudo docker exec -it [IMAGE ID] /bin/bash</span><br><span class="line">sudo docker exec -it centos:centos7 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>使用 exec 进入镜像，exit 退出时，不会关闭容器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker attach [REPOSITORY]:[TAG]</span><br><span class="line">sudo docker attach [IMAGE ID]</span><br></pre></td></tr></table></figure>
+
+<p>使用 attach 进入镜像，exit 退出时，会关闭容器</p>
+<h3 id="3-3-退出镜像"><a href="#3-3-退出镜像" class="headerlink" title="3.3 退出镜像"></a>3.3 退出镜像</h3><p>进入镜像之后，在命令行输入 <code>exit</code> 回车之后就会退出镜像</p>
+<h3 id="3-4-关闭容器"><a href="#3-4-关闭容器" class="headerlink" title="3.4 关闭容器"></a>3.4 关闭容器</h3><p>先找到正在运行的容器ID，<code>sudo docker ps</code> 然后获取容器ID</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker kill [容器ID]</span><br><span class="line">sudo docker kill 9ce04ed78545</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-运行已经关闭的容器"><a href="#3-5-运行已经关闭的容器" class="headerlink" title="3.5 运行已经关闭的容器"></a>3.5 运行已经关闭的容器</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker start -ia [容器ID]</span><br><span class="line">sudo docker start -ia 9ce04ed78545</span><br></pre></td></tr></table></figure>
+
+<h1 id="4、保存镜像到文件"><a href="#4、保存镜像到文件" class="headerlink" title="4、保存镜像到文件"></a>4、保存镜像到文件</h1><h3 id="4-1-创建新的镜像"><a href="#4-1-创建新的镜像" class="headerlink" title="4.1 创建新的镜像"></a>4.1 创建新的镜像</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker commit [正在运行的容器ID] [新的镜像名]:[新的镜像tag]</span><br><span class="line">sudo docker commit 9a73028a1c467 mycentos:001</span><br></pre></td></tr></table></figure>
+
+<p>之后会生成新的一个image</p>
+<h3 id="4-2-查看镜像列表"><a href="#4-2-查看镜像列表" class="headerlink" title="4.2 查看镜像列表"></a>4.2 查看镜像列表</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>找到新生成的那个image，然后打包到文件</p>
+<h3 id="4-3-打包到文件"><a href="#4-3-打包到文件" class="headerlink" title="4.3 打包到文件"></a>4.3 打包到文件</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker save -o [保存文件名] [镜像名称]:[镜像tag]</span><br><span class="line">sudo docker save -o mycentos.image.tar mycentos:001</span><br></pre></td></tr></table></figure>
+
+<p>保存文件后缀对于保存文件的内容和格式好像没影响</p>
+<h1 id="5、加载本地镜像"><a href="#5、加载本地镜像" class="headerlink" title="5、加载本地镜像"></a>5、加载本地镜像</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker load -i [镜像文件路径]</span><br><span class="line">sudo docker load -i ./mycentos.image.tar</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>sudo docker images</code> 可以查看到加载的本地镜像</p>
+<p>然后根据正常的步骤使用即可</p>
+<h1 id="6、删除容器"><a href="#6、删除容器" class="headerlink" title="6、删除容器"></a>6、删除容器</h1><p>先用 <code>sudo docker ps -a</code> 获取到所有容器的列表，然后通过容器ID删除指定容器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker rm [容器ID]</span><br><span class="line">sudo docker rm 9ce04ed78545 e3f6feba27bb</span><br></pre></td></tr></table></figure>
+
+<h1 id="7、删除镜像"><a href="#7、删除镜像" class="headerlink" title="7、删除镜像"></a>7、删除镜像</h1><p>先用 <code>sudo docker images</code> 或者 <code>sudo docker image ls</code> 获取到所有镜像的列表，然后通过镜像ID删除指定镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker rmi [镜像ID]</span><br><span class="line">sudo docker rmi 9ce04ed78545 e3f6feba27bb</span><br></pre></td></tr></table></figure>
+
+<h1 id="8、传送文件"><a href="#8、传送文件" class="headerlink" title="8、传送文件"></a>8、传送文件</h1><p>获取容器ID，<code>sudo docker ps -a</code> , 根据容器ID传送接收文件</p>
+<p>把本地文件拷贝到指定容器中的位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker cp [本地文件] [容器ID]:[容器内目录]</span><br><span class="line">sudo docker cp test.txt 79410eed1c51:/home/user</span><br></pre></td></tr></table></figure>
+
+<p>把容器中的文件拷贝到本地指定位置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker cp [容器ID]:[容器内目录] [本地位置]</span><br><span class="line">sudo docker cp 79410eed1c51:/home/user test.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="附加信息"><a href="#附加信息" class="headerlink" title="附加信息"></a>附加信息</h1><h1 id="1、docker-run-更多解释"><a href="#1、docker-run-更多解释" class="headerlink" title="1、docker run 更多解释"></a>1、docker run 更多解释</h1><p>docker run ：创建一个新的容器并运行一个命令<code>docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</code>语法 OPTIONS 说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-a stdin: 指定标准输入输出内容类型，可选 STDIN/STDOUT/STDERR 三项；</span><br><span class="line">-d: 后台运行容器，并返回容器ID；</span><br><span class="line">-i: 以交互模式运行容器，通常与 -t 同时使用；</span><br><span class="line">-P: 随机端口映射，容器内部端口随机映射到主机的端口</span><br><span class="line">-p: 指定端口映射，格式为：主机(宿主)端口:容器端口</span><br><span class="line">-t: 为容器重新分配一个伪输入终端，通常与 -i 同时使用；</span><br><span class="line">--name=&quot;nginx-lb&quot;: 为容器指定一个名称；</span><br><span class="line">--dns 8.8.8.8: 指定容器使用的DNS服务器，默认和宿主一致；</span><br><span class="line">--dns-search example.com: 指定容器DNS搜索域名，默认和宿主一致；</span><br><span class="line">-h &quot;mars&quot;: 指定容器的hostname；</span><br><span class="line">-e username=&quot;ritchie&quot;: 设置环境变量；</span><br><span class="line">--env-file=[]: 从指定文件读入环境变量；</span><br><span class="line">--cpuset=&quot;0-2&quot; or --cpuset=&quot;0,1,2&quot;: 绑定容器到指定CPU运行；</span><br><span class="line">-m :设置容器使用内存最大值；</span><br><span class="line">--net=&quot;bridge&quot;: 指定容器的网络连接类型，支持 bridge/host/none/container: 四种类型；</span><br><span class="line">--link=[]: 添加链接到另一个容器；</span><br><span class="line">--expose=[]: 开放一个端口或一组端口；</span><br><span class="line">--volume , -v: 绑定一个卷</span><br><span class="line"></span><br><span class="line">-p支持以下几种绑定格式：</span><br><span class="line">// 绑定宿主机IP及端口</span><br><span class="line">ip:hostPort:containerPort</span><br><span class="line">// 绑定宿主机IP</span><br><span class="line">ip::containerPort</span><br><span class="line">// 绑定宿主机端口</span><br><span class="line">hostPort:containerPort</span><br></pre></td></tr></table></figure>
+
+<h1 id="Docker-疑难解答"><a href="#Docker-疑难解答" class="headerlink" title="Docker 疑难解答"></a>Docker 疑难解答</h1><h1 id="1、Docker-磁盘空间不足解决办法"><a href="#1、Docker-磁盘空间不足解决办法" class="headerlink" title="1、Docker 磁盘空间不足解决办法"></a>1、Docker 磁盘空间不足解决办法</h1><p>修改默认镜像存储目录的软连接</p>
+<p>检查空间，一般是这个位置 &#x2F;var&#x2F;lib&#x2F;docker&#x2F; 的空间不足</p>
+<p><code>du -sh /var/lib/docker/</code></p>
+<h3 id="1-1-停止docker"><a href="#1-1-停止docker" class="headerlink" title="1.1 停止docker"></a>1.1 停止docker</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl stop docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-创建目录"><a href="#1-2-创建目录" class="headerlink" title="1.2 创建目录"></a>1.2 创建目录</h3><p>创建目录 &#x2F;data&#x2F;docker&#x2F;lib</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /data/docker/lib</span><br></pre></td></tr></table></figure>
+
+<p>找一个磁盘剩余空间比较多的位置</p>
+<h3 id="1-3-迁移文件"><a href="#1-3-迁移文件" class="headerlink" title="1.3 迁移文件"></a>1.3 迁移文件</h3><p>迁移 &#x2F;var&#x2F;lib&#x2F;docker 目录下面的文件到 &#x2F;data&#x2F;docker&#x2F;lib迁移后的完成docker路径：&#x2F;data&#x2F;docker&#x2F;lib</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo rsync -avz /var/lib/docker/ /data/docker/lib/</span><br></pre></td></tr></table></figure>
+
+<p>迁移完成之后，检查目标目录下的文件是否与源目录一致</p>
+<h3 id="1-4-修改配置文件"><a href="#1-4-修改配置文件" class="headerlink" title="1.4 修改配置文件"></a>1.4 修改配置文件</h3><p>方法一：编辑文件 vi &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;docker.service 修改为如下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/dockerd --gragh=/data/docker/lib</span><br></pre></td></tr></table></figure>
+
+<p>方法二：编辑 &#x2F;etc&#x2F;docker&#x2F;daemon.json 根节点添加如下参数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> ...</span><br><span class="line"> &quot;graph&quot;:&quot;/data/docker/lib&quot;</span><br><span class="line"> ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-重启服务"><a href="#1-5-重启服务" class="headerlink" title="1.5 重启服务"></a>1.5 重启服务</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-查看docker信息"><a href="#1-6-查看docker信息" class="headerlink" title="1.6 查看docker信息"></a>1.6 查看docker信息</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
+
+<p>检查结果中的 Docker Root Dir 是否为设置的 gragh 路径</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# docker info</span><br><span class="line">...</span><br><span class="line">Docker Root Dir: &quot;/data/docker/lib&quot;</span><br><span class="line">Debug Mode (client): false</span><br><span class="line">Debug Mode (server): false</span><br><span class="line">Registry: https://index.docker.io/v1/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-查看images信息"><a href="#1-7-查看images信息" class="headerlink" title="1.7 查看images信息"></a>1.7 查看images信息</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>如果images不完整，检查gragh的路径是否合理</p>
+<p>可选择：成功之后可以删除原来的docker存储镜像的位置 &#x2F;var&#x2F;lib&#x2F;docker</p>
+]]></content>
+      <categories>
+        <category>tools</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Git 操作</title>
+    <url>/2023/06/04/Git_base/</url>
+    <content><![CDATA[<h3 id="拉取代码"><a href="#拉取代码" class="headerlink" title="拉取代码"></a>拉取代码</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone GIT库的网址连接      # 拉取/获取代码</span><br><span class="line">git pull                      # 更新代码</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看状态等"><a href="#查看状态等" class="headerlink" title="查看状态等"></a>查看状态等</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git status       # 查看状态</span><br><span class="line">git log          # 查看 commit 历史信息</span><br><span class="line">git diff A       # 查看修改内容</span><br><span class="line">git branch -a    # 查看所有分支branch</span><br></pre></td></tr></table></figure>
+
+<h3 id="提交更新"><a href="#提交更新" class="headerlink" title="提交更新"></a>提交更新</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone http://ABC          # 拉取项目代码</span><br><span class="line">git branch -a                 # 查看所有分支branch</span><br><span class="line">git checkout ABC              # 切换分支到 ABC 分支</span><br><span class="line">git pull                      # 更新</span><br><span class="line">git add filename.txt          # 添加更新内容</span><br><span class="line">git commit -m &quot;commit info&quot;   # 添加更新的commit信息</span><br><span class="line">git push origin ABC           # 推送更新到远端 ABC 分支</span><br></pre></td></tr></table></figure>
+
+<h3 id="提交本地分支"><a href="#提交本地分支" class="headerlink" title="提交本地分支"></a>提交本地分支</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone http://ABC_ref                      # 拉取代码</span><br><span class="line">git checkout ABK                              # 切换分支</span><br><span class="line">git pull                                      # 更新分支</span><br><span class="line">git checkout -b task/ABC                      # 创建本地分支</span><br><span class="line">git add -A testfile                           # 添加本地修改</span><br><span class="line">git commit -m &quot;commit info&quot;                   # 添加commit信息</span><br><span class="line">git push --set-upstream origin task/ABC       # 提交本地分支修改, git push 会提示提交命令</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改账户"><a href="#修改账户" class="headerlink" title="修改账户"></a>修改账户</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email ABC@abc.com    # 修改邮箱</span><br><span class="line">git config --global user.name &quot;ABC&quot;               # 修改昵称</span><br><span class="line">git commit --amend --reset-author                 # 更新commit 权限</span><br><span class="line">git push                                          # 用修改后的用户推送更新</span><br></pre></td></tr></table></figure>
+
+<h3 id="git-生成patch文件"><a href="#git-生成patch文件" class="headerlink" title="git 生成patch文件"></a>git 生成patch文件</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1.还未提交的修改</span><br><span class="line">git diff &gt; commit.patch</span><br><span class="line"></span><br><span class="line">2.已提交的修改</span><br><span class="line">git diff 3da71ca35 8b5100cdcd &gt; commit.patch</span><br><span class="line">注）3da71ca35 在 8b5100cdcd 前面</span><br><span class="line"></span><br><span class="line">3.已经add但是未commit的修改</span><br><span class="line">git diff --cached &gt; commit.patch</span><br><span class="line"></span><br><span class="line">4.检查patch是否可以应用</span><br><span class="line">git apply --check commit.patch</span><br><span class="line"></span><br><span class="line">5.打补丁</span><br><span class="line">git apply commit.patch</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成并获取完整patch"><a href="#生成并获取完整patch" class="headerlink" title="生成并获取完整patch"></a>生成并获取完整patch</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git add test.txt  # 添加修改的文件到缓冲区</span><br><span class="line">git commit -m &quot;update test.txt&quot;   # 添加修改信息</span><br><span class="line">git format-patch [commit id] -1   # 生成patch文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="发生错误需要修改邮箱和用户名"><a href="#发生错误需要修改邮箱和用户名" class="headerlink" title="发生错误需要修改邮箱和用户名"></a>发生错误需要修改邮箱和用户名</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.name &quot;name&quot;</span><br><span class="line">git config --global user.email  &quot;name@test.com&quot;</span><br><span class="line">git commit --amend --reset-author</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+
+<h3 id="切换分支，下载subproject文件"><a href="#切换分支，下载subproject文件" class="headerlink" title="切换分支，下载subproject文件"></a>切换分支，下载subproject文件</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone -b mplane_testing ssh://git@bb.baidu.com/test.git --recursive</span><br></pre></td></tr></table></figure>
+
+<h3 id="完整分步骤示例"><a href="#完整分步骤示例" class="headerlink" title="完整分步骤示例"></a>完整分步骤示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone http.git</span><br><span class="line">git branch -a</span><br><span class="line">git checkout ABC</span><br><span class="line">git submodule update --init --recursive</span><br><span class="line">git pull</span><br><span class="line"></span><br><span class="line">接下来可以对文件进行修改</span><br><span class="line"></span><br><span class="line">git status</span><br><span class="line">git diff</span><br><span class="line">git add a.txt</span><br><span class="line">git commit -m &quot;commit info&quot;</span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+
+<h3 id="一些问题："><a href="#一些问题：" class="headerlink" title="一些问题："></a>一些问题：</h3><p>关于patch的介绍：</p>
+<ul>
+<li>当使用内核的代码时，没有办直接修改仓库代码，可以生成patch</li>
+<li>patch 是对 源 工程，进行追加的 文件</li>
+</ul>
+<p>关于下载的仓库文件：</p>
+<ul>
+<li>文件会下载到当前位置</li>
+<li>默认会保存到仓库名称的目录下面</li>
+<li>需要再仓库环境创建账户，才可以获取和更新仓库文件</li>
+</ul>
+<blockquote>
+<p>git clone的文件，与网页Download的压缩包，不一定是一致的。</p>
+</blockquote>
+<h2 id="获取所有分支代码"><a href="#获取所有分支代码" class="headerlink" title="获取所有分支代码"></a>获取所有分支代码</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git branch -r | grep -v <span class="string">&#x27;\-&gt;&#x27;</span> | <span class="keyword">while</span> <span class="built_in">read</span> remote; <span class="keyword">do</span> git branch --track <span class="string">&quot;<span class="variable">$&#123;remote#origin/&#125;</span>&quot;</span> <span class="string">&quot;<span class="variable">$remote</span>&quot;</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>code</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>tcpdump的使用</title>
+    <url>/2023/06/04/tcpdump_base/</url>
+    <content><![CDATA[<p>tcpdump和ethereal可以用来获取和分析网络通讯活动，他们都是使用libpcap库来捕获网络封包的。在混杂模式下他们可以监控网络适配器的所有通讯活动并捕获网卡所接收的所有帧。要想设置网络接口为混杂模式并执行这些命令来捕获所有的网络封包，需要具有超级用户的权限。你可以使用这些工具来探究网络相关问题。你可以发现TCP&#x2F;IP重发、窗口大小的缩放、名字解析的问题、网络配置错误等。</p>
+<p>注意这些工具只能监控网络适配器所接收到的帧，并不能监控到整个网络的通讯情况。</p>
+<h1 id="参数介绍"><a href="#参数介绍" class="headerlink" title="参数介绍"></a>参数介绍</h1><ul>
+<li>A 以ASCII格式打印出所有分组，并将链路层的头最小化。</li>
+<li>c 在收到指定的数量的分组后，tcpdump就会停止。</li>
+<li>C 在将一个原始分组写入文件之前，检查文件当前的大小是否超过了参数 file_size 中指定的大小。如果超过了指定大小，则关闭当前文件，然后在打开一个新的文件。参数 file_size 的单位是兆字节（是1,000,000字节，而不是1,048,576字节）。</li>
+<li>d 将匹配信息包的代码以人们能够理解的汇编格式给出。</li>
+<li>dd 将匹配信息包的代码以c语言程序段的格式给出。</li>
+<li>ddd 将匹配信息包的代码以十进制的形式给出。</li>
+<li>D 打印出系统中所有可以用tcpdump截包的网络接口。</li>
+<li>e 在输出行打印出数据链路层的头部信息。</li>
+<li>E 用spi<a href="notion://www.notion.so/ipaddr">@ipaddr</a>  algo:secret解密那些以addr作为地址，并且包含了安全参数索引值spi的IPsec ESP分组。</li>
+<li>f 将外部的Internet地址以数字的形式打印出来。</li>
+<li>F 从指定的文件中读取表达式，忽略命令行中给出的表达式。</li>
+<li>i 指定监听的网络接口。</li>
+<li>l 使标准输出变为缓冲行形式。</li>
+<li>L 列出网络接口的已知数据链路。</li>
+<li>m 从文件module中导入SMI MIB模块定义。该参数可以被使用多次，以导入多个MIB模块。</li>
+<li>M 如果tcp报文中存在TCP-MD5选项，则需要用secret作为共享的验证码用于验证TCP-MD5选选项摘要（详情可参考RFC 2385）。</li>
+<li>n 不把网络地址转换成名字。</li>
+<li>N 不输出主机名中的域名部分。例如，link.linux265.com 只输出link。</li>
+<li>t 在输出的每一行不打印时间戳。</li>
+<li>O 不运行分组分组匹配（packet-matching）代码优化程序。</li>
+<li>P 不将网络接口设置成混杂模式。</li>
+<li>q 快速输出。只输出较少的协议信息。</li>
+<li>r 从指定的文件中读取包(这些包一般通过-w选项产生)。</li>
+<li>S 将tcp的序列号以绝对值形式输出，而不是相对值。</li>
+<li>s 从每个分组中读取最开始的snaplen个字节，而不是默认的68个字节。</li>
+<li>T 将监听到的包直接解释为指定的类型的报文，常见的类型有rpc远程过程调用）和snmp（简单网络管理协议；）。</li>
+<li>t 不在每一行中输出时间戳。</li>
+<li>tt 在每一行中输出非格式化的时间戳。</li>
+<li>ttt 输出本行和前面一行之间的时间差。</li>
+<li>tttt 在每一行中输出由date处理的默认格式的时间戳。</li>
+<li>u 输出未解码的NFS句柄。</li>
+<li>v 输出一个稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息。</li>
+<li>vv 输出详细的报文信息。</li>
+<li>w 直接将分组写入文件中，而不是不分析并打印出来。</li>
+<li>x 以16进制数形式显示每一个报文 (去掉链路层报头) . 可以显示较小的完整报文, 否则只显示snaplen个字节.</li>
+<li>xx 以16进制数形式显示每一个报文（包含链路层包头）。</li>
+<li>X 以16进制和ASCII码形式显示每个报文（去掉链路层报头）。</li>
+<li>XX 以16进制和ASCII吗形式显示每个报文（包含链路层报头）。</li>
+<li>y 设置tcpdump 捕获数据链路层协议类型</li>
+<li>Z 使tcpdump 放弃自己的超级权限(如果以root用户启动tcpdump, tcpdump将会有超级用户权限), 并把当前tcpdump的用户ID设置为user, 组ID设置为user首要所属组的ID</li>
+</ul>
+<h1 id="简单命令"><a href="#简单命令" class="headerlink" title="简单命令"></a>简单命令</h1><p>01、抓取所有网络包，并在terminal中显示抓取的结果，将包以十六进制的形式显示。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump</span><br></pre></td></tr></table></figure>
+
+<p>02、抓取所有的网络包，并存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>03、抓取所有的经过eth0网卡的网络包，并存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>04、抓取源地址是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump src host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>05、抓取地址包含是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>06、抓取目的地址包含是192.168.1.100的包，并将结果保存到 result.cap 文件中。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump dest host 192.168.1.100 -w result.cap</span><br></pre></td></tr></table></figure>
+
+<p>07、抓取主机地址为 192.168.1.100 的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>08、抓取包含192.168.1.0&#x2F;24网段的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn net 192.168.1.0/24</span><br></pre></td></tr></table></figure>
+
+<p>09、抓取网卡eth0上所有包含端口22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn port 22</span><br></pre></td></tr></table></figure>
+
+<p>10、抓取指定协议格式的数据包，协议格式可以是「udp,icmp,arp,ip」中的任何一种,例如以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump udp  -i eth0 -vnn</span><br></pre></td></tr></table></figure>
+
+<p>11、抓取经过 eth0 网卡的源 ip 是 192.168.1.100 数据包，src参数表示源。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>12、抓取经过 eth0 网卡目的 ip 是 192.168.1.100 数据包，dst参数表示目的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn dst host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>13、抓取源端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src port 22</span><br></pre></td></tr></table></figure>
+
+<p>14、抓取源ip是 192.168.1.100 且目的ip端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 and dst port 22</span><br></pre></td></tr></table></figure>
+
+<p>15、抓取源ip是192.168.1.100或者包含端口是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 or port 22</span><br></pre></td></tr></table></figure>
+
+<p>16、抓取源ip是192.168.1.100且端口不是22的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn src host 192.168.1.100 and not port 22</span><br></pre></td></tr></table></figure>
+
+<p>17、抓取源ip是192.168.1.100且目的端口是22，或源ip是192.168.1.102且目的端口是80的数据包。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn ( src host 192.168.1.100 and dst port 22 ) or ( src host 192.168.1.102 and dst port 80 )</span><br></pre></td></tr></table></figure>
+
+<p>18、把抓取的数据包记录存到&#x2F;tmp&#x2F;result文件中，当抓取100个数据包后就退出程序。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump –i eth0 -vnn -w /tmp/result -c 100</span><br></pre></td></tr></table></figure>
+
+<p>19、从&#x2F;tmp&#x2F;result记录中读取tcp协议的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -i eth0  tcp  -vnn -r /tmp/result</span><br></pre></td></tr></table></figure>
+
+<p>20、想要截获所有192.168.1.100 的主机收到的和发出的所有的数据包：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump host 192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>21、如果想要获取主机192.168.1.100除了和主机192.168.1.101之外所有主机通信的ip包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump ip host 192.168.1.100 and ! 192.168.1.101</span><br></pre></td></tr></table></figure>
+
+<p>22、如果想要获取主机 192.168.1.100 接收或发出的 telnet 包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump tcp port 23 host192.168.1.100</span><br></pre></td></tr></table></figure>
+
+<p>23、 以十六进制的形式显示数据包中的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -X -r a.cap</span><br></pre></td></tr></table></figure>
+
+<p>24、以ASCII码的形式进行显示</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -A -r a.cap</span><br></pre></td></tr></table></figure>
+
+<p>25、 以十六进制的形式截获数据包并保存到 a.cap</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -X -w a.cap</span><br></pre></td></tr></table></figure>
+
+<p>24、以ASCII码的形式截获数据包并保存到 a.cap</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tcpdump -A -w a.cap</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux-tools</category>
+      </categories>
+      <tags>
+        <tag>tcpdump</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一些基础shell命令</title>
+    <url>/2023/06/04/shell_command/</url>
+    <content><![CDATA[<p>shell if :<a href="https://www.cnblogs.com/liudianer/p/12071476.html">Shell if 条件判断 - 小白一生 - 博客园 (cnblogs.com)</a></p>
+<h2 id="ctrl-r"><a href="#ctrl-r" class="headerlink" title="ctrl+r"></a>ctrl+r</h2><p>查找历史中输入过的命令</p>
+<h2 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h2><ul>
+<li>‘nohup’ 表示不挂起， 即正常退出终端连接也不挂起进程。</li>
+<li>‘command’ 表示要运行的后台进程 例如：sh run.sh</li>
+<li>‘&gt;’ 表示重定向 表示将 &gt;左边的消息定向输出&gt;右边的某个文件中 例如以下命令将标出输出重定向到out.log文件中</li>
+<li>‘2&gt;&amp;1’ 是将标准出错重定向到标准输出， 2 &gt;代表标准出错定向 ，&amp;1代表标准输出</li>
+<li>‘&amp;’ 表示将程序进程提交到后台运行 ，但只使用&amp; 屏幕还是会打印程序相关日志</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用如下命令后台运行程序，out.log为程序日志输出的目录</span></span><br><span class="line"><span class="built_in">nohup</span> <span class="built_in">command</span> &gt; out.log 2&gt;&amp;1 &amp;</span><br><span class="line"><span class="comment"># 使用 exit 命令 正常退出终端</span></span><br><span class="line"><span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h3><ul>
+<li>链接 server：ssh <a href="mailto:&#x75;&#x73;&#101;&#x72;&#x40;&#x31;&#x39;&#x32;&#46;&#49;&#54;&#56;&#46;&#x30;&#46;&#x31;">&#x75;&#x73;&#101;&#x72;&#x40;&#x31;&#x39;&#x32;&#46;&#49;&#54;&#56;&#46;&#x30;&#46;&#x31;</a></li>
+<li>生成 keygen：ssh-keygen -t rsa -C “<a href="mailto:&#x61;&#98;&#99;&#x40;&#98;&#97;&#x63;&#46;&#99;&#x6f;&#x6d;">&#x61;&#98;&#99;&#x40;&#98;&#97;&#x63;&#46;&#99;&#x6f;&#x6d;</a>“</li>
+</ul>
+<h3 id="ethtool"><a href="#ethtool" class="headerlink" title="ethtool"></a>ethtool</h3><p>修改网卡速率: <strong>-s</strong></p>
+<p>这个命令多用于手工设置网络速率，一般千兆网卡支持10|100|1000三个速率，单位是Mbps。</p>
+<p>#具体参数请自行查询</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 用法：</span></span><br><span class="line">ethtool -s eth0 speed 1000 duplex full autoneg off</span><br></pre></td></tr></table></figure>
+
+<p>效果：将设备号eth0对应的物理端口设置为速率为1000Mbps，全双工工作模式，同时关闭自动协商。</p>
+<p>注：若需要永久更改有两种方法：</p>
+<ol>
+<li>将上述命令写入 &#x2F;etc&#x2F;rc.local 文件中，开机自动执行；</li>
+<li>在 &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-eth0 中添加一行 ETHTOOL_OPTS&#x3D;”speed 1000 duplex full autoneg off”。这里仅仅以 eth0 为例，其他设备号同理。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查询 ethx 网口基本设置</span></span><br><span class="line">ethtool ens33</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网卡执行自我检测: **-t**</span></span><br><span class="line">sudo ethtool -t ens33</span><br></pre></td></tr></table></figure>
+
+<h3 id="dmesg"><a href="#dmesg" class="headerlink" title="dmesg"></a>dmesg</h3><p>查看所有硬件的内容</p>
+<p><strong>实时监控 dmesg 日志输出</strong></p>
+<p>在某些发行版中可以使用命令 ‘tail -f &#x2F;var&#x2F;log&#x2F;dmesg’ 来实时监控 dmesg 的日志输出。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">[root@real_2 ~]<span class="meta"># watch <span class="string">&quot;dmesg | tail -20&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="根据进程名杀死进程-ps-ef"><a href="#根据进程名杀死进程-ps-ef" class="headerlink" title="根据进程名杀死进程 ps -ef"></a>根据进程名杀死进程 ps -ef</h2><p>查看进程，并杀死特定进程 pname是进程名称</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">ps -ef | grep pname | grep -v grep | awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | xarg skill <span class="number">-9</span></span><br><span class="line"></span><br><span class="line">ps -T -p &lt;pid&gt; --查看特定进程下的线程运行情况</span><br><span class="line"></span><br><span class="line">top -H -p &lt;pid&gt; --查看特定进程下的线程运行情况</span><br></pre></td></tr></table></figure>
+
+<h2 id="字符分割-绝对值比较"><a href="#字符分割-绝对值比较" class="headerlink" title="字符分割+绝对值比较"></a>字符分割+绝对值比较</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> -x</span><br><span class="line"></span><br><span class="line">DEVID=<span class="variable">$1</span></span><br><span class="line">STIME=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> != 2 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;usage: sh Sphc2sys.sh /dev/ptp0 1&quot;</span></span><br><span class="line">    <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line"></span><br><span class="line">HWTIME=`phc_ctl <span class="variable">$DEVID</span> get`</span><br><span class="line">SWTIME=`<span class="built_in">date</span> +%s`</span><br><span class="line"></span><br><span class="line">hwarr=(<span class="variable">$&#123;HWTIME// / &#125;</span>)</span><br><span class="line">itss=(<span class="variable">$&#123;hwarr[4]//./ &#125;</span>)</span><br><span class="line">difftime=$[ <span class="variable">$&#123;itss[0]&#125;</span> - <span class="variable">$SWTIME</span> ]</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;difftime#-&#125;</span> &gt; 1 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">date</span> -s <span class="string">&quot;<span class="variable">$&#123;hwarr[6]&#125;</span> <span class="variable">$&#123;hwarr[7]&#125;</span> <span class="variable">$&#123;hwarr[8]&#125;</span> <span class="variable">$&#123;hwarr[9]&#125;</span> <span class="variable">$&#123;hwarr[10]&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">sleep</span> <span class="variable">$STIME</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux</category>
+        <category>code</category>
+      </categories>
+      <tags>
+        <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Tomcat的使用</title>
+    <url>/2023/06/04/tomcat_base/</url>
+    <content><![CDATA[<h2 id="wsl-安装-tomcat-以及部署-war-应用"><a href="#wsl-安装-tomcat-以及部署-war-应用" class="headerlink" title="wsl 安装 tomcat 以及部署 war 应用"></a>wsl 安装 tomcat 以及部署 war 应用</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /usr/local/tomcat/</span><br><span class="line"><span class="built_in">cd</span> /usr/local/tomcat/</span><br><span class="line">wget [https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.70/bin/apache-tomcat-9.0.70.tar.gz](https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.70/bin/apache-tomcat-9.0.70.tar.gz)</span><br><span class="line">tar -zxvf apache-tomcat-9.0.70.tar.gz</span><br><span class="line"><span class="built_in">cd</span> apache-tomcat-9.0.70</span><br><span class="line">sh ./startup.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启 tomcat 端口 （不一定不需要这个步骤）</span></span><br><span class="line">iptables  -I  INPUT  -p  tcp  --dport  8080  -j  ACCEPT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 jdk</span></span><br><span class="line">sudo apt search openjdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 tomcat</span></span><br><span class="line">sh /usr/local/tomcat/apache-tomcat-9.0.70/bin/shutdown.sh</span><br><span class="line"><span class="built_in">sleep</span> 1</span><br><span class="line">sh /usr/local/tomcat/apache-tomcat-9.0.70/bin/startup.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取 drawio  （画流程图的工具）</span></span><br><span class="line"><span class="comment"># 浏览器打开即可 https://github.com/jgraph/drawio/releases</span></span><br><span class="line"><span class="comment"># 下载 draw.war 包 releases 版本</span></span><br><span class="line"><span class="comment"># 复制到 apache-tomcat-9.0.70/webapps 目录下</span></span><br><span class="line"><span class="comment"># 重启tomcat即可</span></span><br><span class="line"><span class="comment"># 进入应用的网址：http://127.0.0.1:8080/draw</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>linux-tools</category>
+      </categories>
+      <tags>
+        <tag>tomcat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>tmux的使用</title>
+    <url>/2023/06/04/tmux_base/</url>
+    <content><![CDATA[<h1 id="tmux-终端复用器"><a href="#tmux-终端复用器" class="headerlink" title="tmux 终端复用器"></a>tmux 终端复用器</h1><p>用户与计算机的这种临时的交互，称为一次”会话”（session）</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Ubuntu 或 Debian</span><br><span class="line">$ sudo apt-get install tmux</span><br><span class="line"></span><br><span class="line"># CentOS 或 Fedora</span><br><span class="line">$ sudo yum install tmux</span><br><span class="line"></span><br><span class="line"># Mac</span><br><span class="line">$ brew install tmux</span><br></pre></td></tr></table></figure>
+
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">tmux new -s &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h1><h3 id="新建会话"><a href="#新建会话" class="headerlink" title="新建会话"></a>新建会话</h3><p>第一个启动的 Tmux 窗口，编号是0，第二个窗口的编号是1，以此类推。这些窗口对应的会话，就是 0 号会话、1 号会话。</p>
+<p>使用编号区分会话，不太直观，更好的方法是为会话起名。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tmux new -s &lt;session-name&gt;  # 新建一个指定名称的会话。</span><br></pre></td></tr></table></figure>
+
+<h3 id="分离会话"><a href="#分离会话" class="headerlink" title="分离会话"></a>分离会话</h3><p>在 Tmux 窗口中，按下Ctrl+b d或者输入tmux detach命令，就会将当前会话与窗口分离。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tmux detach</span><br></pre></td></tr></table></figure>
+
+<p>上面命令执行后，就会退出当前 Tmux 窗口，但是会话和里面的进程仍然在后台运行。</p>
+<h3 id="查看当前所有的-Tmux-会话"><a href="#查看当前所有的-Tmux-会话" class="headerlink" title="查看当前所有的 Tmux 会话"></a>查看当前所有的 Tmux 会话</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tmux ls</span><br><span class="line">or</span><br><span class="line">$ tmux list-session</span><br></pre></td></tr></table></figure>
+
+<h3 id="接入会话"><a href="#接入会话" class="headerlink" title="接入会话"></a>接入会话</h3><p>tmux attach 命令用于重新接入某个已存在的会话。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用会话编号</span><br><span class="line">$ tmux attach -t 0</span><br><span class="line"></span><br><span class="line">使用会话名称</span><br><span class="line">$ tmux attach -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="杀死会话"><a href="#杀死会话" class="headerlink" title="杀死会话"></a>杀死会话</h3><p>tmux kill-session命令用于杀死某个会话。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用会话编号</span><br><span class="line">$ tmux kill-session -t 0</span><br><span class="line"></span><br><span class="line">使用会话名称</span><br><span class="line">$ tmux kill-session -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="切换会话"><a href="#切换会话" class="headerlink" title="切换会话"></a>切换会话</h3><p>tmux switch命令用于切换会话。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用会话编号</span><br><span class="line">$ tmux switch -t 0</span><br><span class="line"></span><br><span class="line">使用会话名称</span><br><span class="line">$ tmux switch -t &lt;session-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="重命名会话"><a href="#重命名会话" class="headerlink" title="重命名会话"></a>重命名会话</h3><p>tmux rename-session命令用于重命名会话。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tmux rename-session -t 0 &lt;new-name&gt;   # 将0号会话重命名。</span><br></pre></td></tr></table></figure>
+
+<h3 id="会话快捷键"><a href="#会话快捷键" class="headerlink" title="会话快捷键"></a>会话快捷键</h3><p>下面是一些会话相关的快捷键：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Ctrl+b d：分离当前会话。</span><br><span class="line">Ctrl+b s：列出所有会话。</span><br><span class="line">Ctrl+b $：重命名当前会话。</span><br></pre></td></tr></table></figure>
+
+<p>最简操作流程综上所述，以下是 Tmux 的最简操作流程。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">新建会话tmux new -s my_session。</span><br><span class="line">在 Tmux 窗口运行所需的程序。</span><br><span class="line">按下快捷键Ctrl+b d将会话分离。</span><br><span class="line">下次使用时，重新连接到会话tmux attach-session -t my_session。</span><br></pre></td></tr></table></figure>
+
+<h3 id="窗格操作"><a href="#窗格操作" class="headerlink" title="窗格操作"></a>窗格操作</h3><p>Tmux 可以将窗口分成多个窗格（pane），每个窗格运行不同的命令。以下命令都是在 Tmux 窗口中执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 划分窗格</span><br><span class="line">tmux split-window命令用来划分窗格。</span><br><span class="line"></span><br><span class="line"># 划分上下两个窗格</span><br><span class="line">$ tmux split-window</span><br><span class="line"></span><br><span class="line"># 划分左右两个窗格</span><br><span class="line">$ tmux split-window -h</span><br><span class="line"></span><br><span class="line"># 移动光标</span><br><span class="line">tmux select-pane 命令用来移动光标位置。</span><br><span class="line"></span><br><span class="line"># 光标切换到上方窗格</span><br><span class="line">$ tmux select-pane -U</span><br><span class="line"></span><br><span class="line"># 光标切换到下方窗格</span><br><span class="line">$ tmux select-pane -D</span><br><span class="line"></span><br><span class="line"># 光标切换到左边窗格</span><br><span class="line">$ tmux select-pane -L</span><br><span class="line"></span><br><span class="line"># 光标切换到右边窗格</span><br><span class="line">$ tmux select-pane -R</span><br><span class="line"></span><br><span class="line"># 交换窗格位置</span><br><span class="line">tmux swap-pane命令用来交换窗格位置。</span><br><span class="line"></span><br><span class="line"># 当前窗格上移</span><br><span class="line">$ tmux swap-pane -U</span><br><span class="line"></span><br><span class="line"># 当前窗格下移</span><br><span class="line">$ tmux swap-pane -D</span><br></pre></td></tr></table></figure>
+
+<h3 id="窗格快捷键"><a href="#窗格快捷键" class="headerlink" title="窗格快捷键"></a>窗格快捷键</h3><p>下面是一些窗格操作的快捷键:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Ctrl+b %：划分左右两个窗格。</span><br><span class="line">Ctrl+b &quot;：划分上下两个窗格。</span><br><span class="line">Ctrl+b &lt;arrow key&gt;：光标切换到其他窗格。&lt;arrow key&gt;是指向要切换到的窗格的方向键，比如切换到下方窗格，就按方向键↓。</span><br><span class="line">Ctrl+b ;：光标切换到上一个窗格。</span><br><span class="line">Ctrl+b o：光标切换到下一个窗格。</span><br><span class="line">Ctrl+b &#123;：当前窗格与上一个窗格交换位置。</span><br><span class="line">Ctrl+b &#125;：当前窗格与下一个窗格交换位置。</span><br><span class="line">Ctrl+b Ctrl+o：所有窗格向前移动一个位置，第一个窗格变成最后一个窗格。</span><br><span class="line">Ctrl+b Alt+o：所有窗格向后移动一个位置，最后一个窗格变成第一个窗格。</span><br><span class="line">Ctrl+b x：关闭当前窗格。</span><br><span class="line">Ctrl+b !：将当前窗格拆分为一个独立窗口。</span><br><span class="line">Ctrl+b z：当前窗格全屏显示，再使用一次会变回原来大小。</span><br><span class="line">Ctrl+b Ctrl+&lt;arrow key&gt;：按箭头方向调整窗格大小。</span><br><span class="line">Ctrl+b q：显示窗格编号。</span><br></pre></td></tr></table></figure>
+
+<h3 id="窗口管理"><a href="#窗口管理" class="headerlink" title="窗口管理"></a>窗口管理</h3><p>除了将一个窗口划分成多个窗格，Tmux 也允许新建多个窗口。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 新建窗口</span><br><span class="line">$ tmux new-window</span><br><span class="line"></span><br><span class="line"># 新建一个指定名称的窗口</span><br><span class="line">$ tmux new-window -n &lt;window-name&gt;</span><br><span class="line"></span><br><span class="line"># 切换窗口</span><br><span class="line">tmux select-window命令用来切换窗口。</span><br><span class="line"></span><br><span class="line"># 切换到指定编号的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-number&gt;</span><br><span class="line"></span><br><span class="line"># 切换到指定名称的窗口</span><br><span class="line">$ tmux select-window -t &lt;window-name&gt;</span><br><span class="line"></span><br><span class="line"># 重命名窗口</span><br><span class="line">tmux rename-window 命令用于为当前窗口起名（或重命名）。</span><br><span class="line">$ tmux rename-window &lt;new-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="窗口快捷键"><a href="#窗口快捷键" class="headerlink" title="窗口快捷键"></a>窗口快捷键</h3><p>下面是一些窗口操作的快捷键:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Ctrl+b c：创建一个新窗口，状态栏会显示多个窗口的信息。</span><br><span class="line">Ctrl+b p：切换到上一个窗口（按照状态栏上的顺序）。</span><br><span class="line">Ctrl+b n：切换到下一个窗口。</span><br><span class="line">Ctrl+b &lt;number&gt;：切换到指定编号的窗口，其中的&lt;number&gt;是状态栏上的窗口编号。</span><br><span class="line">Ctrl+b w：从列表中选择窗口。</span><br><span class="line">Ctrl+b ,：窗口重命名。</span><br></pre></td></tr></table></figure>
+
+<h1 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h1><p>下面是一些其他命令:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 列出所有快捷键，及其对应的 Tmux 命令</span><br><span class="line">$ tmux list-keys</span><br><span class="line"></span><br><span class="line"># 列出所有 Tmux 命令及其参数</span><br><span class="line">$ tmux list-commands</span><br><span class="line"></span><br><span class="line"># 列出当前所有 Tmux 会话的信息</span><br><span class="line">$ tmux info</span><br><span class="line"></span><br><span class="line"># 重新加载当前的 Tmux 配置</span><br><span class="line">$ tmux source-file ~/.tmux.conf</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p>A Quick and Easy Guide to tmux   –   <a href="https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/">https://www.hamvocke.com/blog/a-quick-and-easy-guide-to-tmux/</a></p>
+<p>Tactical tmux: The 10 Most Important Commands   –   <a href="https://danielmiessler.com/study/tmux/">https://danielmiessler.com/study/tmux/</a></p>
+<p>Getting started with Tmux   –   <a href="https://linuxize.com/post/getting-started-with-tmux/">https://linuxize.com/post/getting-started-with-tmux/</a></p>
+]]></content>
+      <categories>
+        <category>linux-tools</category>
+      </categories>
+      <tags>
+        <tag>tmux</tag>
+      </tags>
   </entry>
 </search>

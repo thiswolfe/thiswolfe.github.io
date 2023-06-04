@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"show_result":"default","style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Docker是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可抑制的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化。容器完全使用沙盒机制，相互之间不会存在任何接口。几乎没有性能开销，可以很容易的在机器和数据中心运行。最重要的是，他们不依赖于任何语言、框架或者包装系统。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker的使用">
+<meta property="og:url" content="http://example.com/2023/06/04/Docker_base/index.html">
+<meta property="og:site_name" content="WEYCAT">
+<meta property="og:description" content="Docker是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可抑制的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化。容器完全使用沙盒机制，相互之间不会存在任何接口。几乎没有性能开销，可以很容易的在机器和数据中心运行。最重要的是，他们不依赖于任何语言、框架或者包装系统。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-04T12:27:41.356Z">
+<meta property="article:modified_time" content="2023-06-04T12:53:41.448Z">
+<meta property="article:author" content="十九号快递员">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/06/04/Docker_base/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/04/Docker_base/","path":"2023/06/04/Docker_base/","title":"Docker的使用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Docker的使用 | WEYCAT</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">WEYCAT</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-文章"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>文章</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="nav-number">1.</span> <span class="nav-text">1、拉取镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%E5%92%8C%E9%95%9C%E5%83%8F"><span class="nav-number">2.</span> <span class="nav-text">2、查看容器和镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1%E3%80%81%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8"><span class="nav-number">2.0.1.</span> <span class="nav-text">2.1、查看容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2%E3%80%81%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F"><span class="nav-number">2.0.2.</span> <span class="nav-text">2.2、查看镜像</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F"><span class="nav-number">3.</span> <span class="nav-text">3、使用镜像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%BF%90%E8%A1%8C%E9%95%9C%E5%83%8F"><span class="nav-number">3.0.1.</span> <span class="nav-text">3.1 运行镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BD%BF%E7%94%A8%E9%95%9C%E5%83%8F"><span class="nav-number">3.0.2.</span> <span class="nav-text">3.2 使用镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%80%80%E5%87%BA%E9%95%9C%E5%83%8F"><span class="nav-number">3.0.3.</span> <span class="nav-text">3.3 退出镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%85%B3%E9%97%AD%E5%AE%B9%E5%99%A8"><span class="nav-number">3.0.4.</span> <span class="nav-text">3.4 关闭容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%BF%90%E8%A1%8C%E5%B7%B2%E7%BB%8F%E5%85%B3%E9%97%AD%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="nav-number">3.0.5.</span> <span class="nav-text">3.5 运行已经关闭的容器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4%E3%80%81%E4%BF%9D%E5%AD%98%E9%95%9C%E5%83%8F%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">4、保存镜像到文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%88%9B%E5%BB%BA%E6%96%B0%E7%9A%84%E9%95%9C%E5%83%8F"><span class="nav-number">4.0.1.</span> <span class="nav-text">4.1 创建新的镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E5%88%97%E8%A1%A8"><span class="nav-number">4.0.2.</span> <span class="nav-text">4.2 查看镜像列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%89%93%E5%8C%85%E5%88%B0%E6%96%87%E4%BB%B6"><span class="nav-number">4.0.3.</span> <span class="nav-text">4.3 打包到文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5%E3%80%81%E5%8A%A0%E8%BD%BD%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F"><span class="nav-number">5.</span> <span class="nav-text">5、加载本地镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6%E3%80%81%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">6、删除容器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7%E3%80%81%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="nav-number">7.</span> <span class="nav-text">7、删除镜像</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8%E3%80%81%E4%BC%A0%E9%80%81%E6%96%87%E4%BB%B6"><span class="nav-number">8.</span> <span class="nav-text">8、传送文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%99%84%E5%8A%A0%E4%BF%A1%E6%81%AF"><span class="nav-number">9.</span> <span class="nav-text">附加信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81docker-run-%E6%9B%B4%E5%A4%9A%E8%A7%A3%E9%87%8A"><span class="nav-number">10.</span> <span class="nav-text">1、docker run 更多解释</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Docker-%E7%96%91%E9%9A%BE%E8%A7%A3%E7%AD%94"><span class="nav-number">11.</span> <span class="nav-text">Docker 疑难解答</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81Docker-%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4%E4%B8%8D%E8%B6%B3%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-number">12.</span> <span class="nav-text">1、Docker 磁盘空间不足解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%81%9C%E6%AD%A2docker"><span class="nav-number">12.0.1.</span> <span class="nav-text">1.1 停止docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95"><span class="nav-number">12.0.2.</span> <span class="nav-text">1.2 创建目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%BF%81%E7%A7%BB%E6%96%87%E4%BB%B6"><span class="nav-number">12.0.3.</span> <span class="nav-text">1.3 迁移文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">12.0.4.</span> <span class="nav-text">1.4 修改配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1"><span class="nav-number">12.0.5.</span> <span class="nav-text">1.5 重启服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-%E6%9F%A5%E7%9C%8Bdocker%E4%BF%A1%E6%81%AF"><span class="nav-number">12.0.6.</span> <span class="nav-text">1.6 查看docker信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-7-%E6%9F%A5%E7%9C%8Bimages%E4%BF%A1%E6%81%AF"><span class="nav-number">12.0.7.</span> <span class="nav-text">1.7 查看images信息</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="十九号快递员"
+      src="https://avatars.githubusercontent.com/u/46558558?v=4">
+  <p class="site-author-name" itemprop="name">十九号快递员</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yourname" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yourname" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="https://www.baidu.com/" title="https:&#x2F;&#x2F;www.baidu.com" rel="noopener" target="_blank">Baidu</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="https://www.bing.com/" title="https:&#x2F;&#x2F;www.bing.com" rel="noopener" target="_blank">Bing</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/04/Docker_base/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/46558558?v=4">
+      <meta itemprop="name" content="十九号快递员">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WEYCAT">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Docker的使用 | WEYCAT">
+      <meta itemprop="description" content="Docker是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可抑制的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化。容器完全使用沙盒机制，相互之间不会存在任何接口。几乎没有性能开销，可以很容易的在机器和数据中心运行。最重要的是，他们不依赖于任何语言、框架或者包装系统。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker的使用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-06-04 20:27:41 / 修改时间：20:53:41" itemprop="dateCreated datePublished" datetime="2023-06-04T20:27:41+08:00">2023-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">Docker是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可抑制的容器中，然后发布到任何流行的Linux机器上，也可以实现虚拟化。容器完全使用沙盒机制，相互之间不会存在任何接口。几乎没有性能开销，可以很容易的在机器和数据中心运行。最重要的是，他们不依赖于任何语言、框架或者包装系统。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Docker 包括三个基本概念:</p>
+<ul>
+<li><strong>镜像（Image）</strong>：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。</li>
+<li><strong>容器（Container）</strong>：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。</li>
+<li><strong>仓库（Repository）</strong>：仓库可看成一个代码控制中心，用来保存镜像。</li>
+</ul>
+<p>Docker 使用客户端-服务器 (C&#x2F;S) 架构模式，使用远程API来管理和创建Docker容器。</p>
+<p>Docker 容器通过 Docker 镜像来创建。</p>
+<p>容器与镜像的关系类似于面向对象编程中的对象与类。</p>
+<p>其他一些说明</p>
+<p><strong>Docker Machine</strong>，是一个简化Docker安装的命令行工具，通过一个简单的命令行即可在相应的平台上安装Docker，比如VirtualBox、 Digital Ocean、Microsoft Azure。</p>
+<p><strong>Docker Registry</strong>，Docker 仓库用来保存镜像，可以理解为代码控制中的代码仓库。Docker Hub <a target="_blank" rel="noopener" href="https://hub.docker.com/">https://hub.docker.com/</a> 提供了庞大的镜像集合供使用。一个 Docker Registry 中可以包含多个仓库（Repository）；每个仓库可以包含多个标签（Tag）；每个标签对应一个镜像。</p>
+<p>通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本。我们可以通过 <strong>&lt;仓库名&gt;:&lt;标签&gt;</strong> 的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以 <strong>latest</strong> 作为默认标签。</p>
+<p>**Docker 主机(Host)**，一个物理或者虚拟的机器用于执行 Docker 守护进程和容器。</p>
+<p>关于安装 docker 就不说了</p>
+<h1 id="1、拉取镜像"><a href="#1、拉取镜像" class="headerlink" title="1、拉取镜像"></a>1、拉取镜像</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker pull centos:centos7</span><br></pre></td></tr></table></figure>
+
+<p>需要用sudo权限，把centos7的镜像pull到本地</p>
+<h1 id="2、查看容器和镜像"><a href="#2、查看容器和镜像" class="headerlink" title="2、查看容器和镜像"></a>2、查看容器和镜像</h1><h3 id="2-1、查看容器"><a href="#2-1、查看容器" class="headerlink" title="2.1、查看容器"></a>2.1、查看容器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker ps -a       # 查看本地所有容器，包括已经停止运行的容器</span><br><span class="line">sudo docker ps          # 查看正在运行的容器</span><br></pre></td></tr></table></figure>
+
+<p>显示字段介绍</p>
+<ul>
+<li><strong>CONTAINER ID：</strong>容器 ID</li>
+<li><strong>IMAGE：</strong>使用的镜像</li>
+<li><strong>COMMAND：</strong>启动容器时后，容器运行的命令</li>
+<li><strong>CREATED：</strong>容器的创建时间</li>
+<li><strong>STATUS：</strong>容器状态</li>
+<li><strong>PORTS：</strong>实际运行端口，若有指定运行端口则会显示指定的端口和默认运行端口，以及连接类型( tcp &#x2F; udp )</li>
+<li><strong>NAMES：</strong>容器名字</li>
+<li><strong>SIZE：</strong>容器全部文件的总大小，也会显示容器大小</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker inspect [运行的容器ID]   # 查看运行的容器的IP等信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2、查看镜像"><a href="#2-2、查看镜像" class="headerlink" title="2.2、查看镜像"></a>2.2、查看镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>查看本地所有镜像，显示的选项说明:</p>
+<ul>
+<li><strong>REPOSITORY：</strong>表示镜像的仓库源</li>
+<li><strong>TAG：</strong>镜像的标签</li>
+<li><strong>IMAGE ID：</strong>镜像ID</li>
+<li><strong>CREATED：</strong>镜像创建时间</li>
+<li><strong>SIZE：</strong>镜像大小</li>
+</ul>
+<h1 id="3、使用镜像"><a href="#3、使用镜像" class="headerlink" title="3、使用镜像"></a>3、使用镜像</h1><h3 id="3-1-运行镜像"><a href="#3-1-运行镜像" class="headerlink" title="3.1 运行镜像"></a>3.1 运行镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run [REPOSITORY]:[TAG] /bin/bash</span><br><span class="line">sudo docker run [IMAGE ID] /bin/bash</span><br><span class="line">sudo docker run -itd centos:centos7 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>i</strong>：交互式操作。</li>
+<li><strong>t</strong>： 终端。</li>
+<li><strong>d</strong>：后台运行。不使用-d选项，可直接进入操作，退出exit时容器立即释放</li>
+</ul>
+<h3 id="3-2-使用镜像"><a href="#3-2-使用镜像" class="headerlink" title="3.2 使用镜像"></a>3.2 使用镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec -it [REPOSITORY]:[TAG] /bin/bash</span><br><span class="line">sudo docker exec -it [IMAGE ID] /bin/bash</span><br><span class="line">sudo docker exec -it centos:centos7 /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p>使用 exec 进入镜像，exit 退出时，不会关闭容器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker attach [REPOSITORY]:[TAG]</span><br><span class="line">sudo docker attach [IMAGE ID]</span><br></pre></td></tr></table></figure>
+
+<p>使用 attach 进入镜像，exit 退出时，会关闭容器</p>
+<h3 id="3-3-退出镜像"><a href="#3-3-退出镜像" class="headerlink" title="3.3 退出镜像"></a>3.3 退出镜像</h3><p>进入镜像之后，在命令行输入 <code>exit</code> 回车之后就会退出镜像</p>
+<h3 id="3-4-关闭容器"><a href="#3-4-关闭容器" class="headerlink" title="3.4 关闭容器"></a>3.4 关闭容器</h3><p>先找到正在运行的容器ID，<code>sudo docker ps</code> 然后获取容器ID</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker kill [容器ID]</span><br><span class="line">sudo docker kill 9ce04ed78545</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-5-运行已经关闭的容器"><a href="#3-5-运行已经关闭的容器" class="headerlink" title="3.5 运行已经关闭的容器"></a>3.5 运行已经关闭的容器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker start -ia [容器ID]</span><br><span class="line">sudo docker start -ia 9ce04ed78545</span><br></pre></td></tr></table></figure>
+
+<h1 id="4、保存镜像到文件"><a href="#4、保存镜像到文件" class="headerlink" title="4、保存镜像到文件"></a>4、保存镜像到文件</h1><h3 id="4-1-创建新的镜像"><a href="#4-1-创建新的镜像" class="headerlink" title="4.1 创建新的镜像"></a>4.1 创建新的镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker commit [正在运行的容器ID] [新的镜像名]:[新的镜像tag]</span><br><span class="line">sudo docker commit 9a73028a1c467 mycentos:001</span><br></pre></td></tr></table></figure>
+
+<p>之后会生成新的一个image</p>
+<h3 id="4-2-查看镜像列表"><a href="#4-2-查看镜像列表" class="headerlink" title="4.2 查看镜像列表"></a>4.2 查看镜像列表</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>找到新生成的那个image，然后打包到文件</p>
+<h3 id="4-3-打包到文件"><a href="#4-3-打包到文件" class="headerlink" title="4.3 打包到文件"></a>4.3 打包到文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker save -o [保存文件名] [镜像名称]:[镜像tag]</span><br><span class="line">sudo docker save -o mycentos.image.tar mycentos:001</span><br></pre></td></tr></table></figure>
+
+<p>保存文件后缀对于保存文件的内容和格式好像没影响</p>
+<h1 id="5、加载本地镜像"><a href="#5、加载本地镜像" class="headerlink" title="5、加载本地镜像"></a>5、加载本地镜像</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker load -i [镜像文件路径]</span><br><span class="line">sudo docker load -i ./mycentos.image.tar</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>sudo docker images</code> 可以查看到加载的本地镜像</p>
+<p>然后根据正常的步骤使用即可</p>
+<h1 id="6、删除容器"><a href="#6、删除容器" class="headerlink" title="6、删除容器"></a>6、删除容器</h1><p>先用 <code>sudo docker ps -a</code> 获取到所有容器的列表，然后通过容器ID删除指定容器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker rm [容器ID]</span><br><span class="line">sudo docker rm 9ce04ed78545 e3f6feba27bb</span><br></pre></td></tr></table></figure>
+
+<h1 id="7、删除镜像"><a href="#7、删除镜像" class="headerlink" title="7、删除镜像"></a>7、删除镜像</h1><p>先用 <code>sudo docker images</code> 或者 <code>sudo docker image ls</code> 获取到所有镜像的列表，然后通过镜像ID删除指定镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker rmi [镜像ID]</span><br><span class="line">sudo docker rmi 9ce04ed78545 e3f6feba27bb</span><br></pre></td></tr></table></figure>
+
+<h1 id="8、传送文件"><a href="#8、传送文件" class="headerlink" title="8、传送文件"></a>8、传送文件</h1><p>获取容器ID，<code>sudo docker ps -a</code> , 根据容器ID传送接收文件</p>
+<p>把本地文件拷贝到指定容器中的位置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker cp [本地文件] [容器ID]:[容器内目录]</span><br><span class="line">sudo docker cp test.txt 79410eed1c51:/home/user</span><br></pre></td></tr></table></figure>
+
+<p>把容器中的文件拷贝到本地指定位置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo docker cp [容器ID]:[容器内目录] [本地位置]</span><br><span class="line">sudo docker cp 79410eed1c51:/home/user test.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="附加信息"><a href="#附加信息" class="headerlink" title="附加信息"></a>附加信息</h1><h1 id="1、docker-run-更多解释"><a href="#1、docker-run-更多解释" class="headerlink" title="1、docker run 更多解释"></a>1、docker run 更多解释</h1><p>docker run ：创建一个新的容器并运行一个命令<code>docker run [OPTIONS] IMAGE [COMMAND] [ARG...]</code>语法 OPTIONS 说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">-a stdin: 指定标准输入输出内容类型，可选 STDIN/STDOUT/STDERR 三项；</span><br><span class="line">-d: 后台运行容器，并返回容器ID；</span><br><span class="line">-i: 以交互模式运行容器，通常与 -t 同时使用；</span><br><span class="line">-P: 随机端口映射，容器内部端口随机映射到主机的端口</span><br><span class="line">-p: 指定端口映射，格式为：主机(宿主)端口:容器端口</span><br><span class="line">-t: 为容器重新分配一个伪输入终端，通常与 -i 同时使用；</span><br><span class="line">--name=&quot;nginx-lb&quot;: 为容器指定一个名称；</span><br><span class="line">--dns 8.8.8.8: 指定容器使用的DNS服务器，默认和宿主一致；</span><br><span class="line">--dns-search example.com: 指定容器DNS搜索域名，默认和宿主一致；</span><br><span class="line">-h &quot;mars&quot;: 指定容器的hostname；</span><br><span class="line">-e username=&quot;ritchie&quot;: 设置环境变量；</span><br><span class="line">--env-file=[]: 从指定文件读入环境变量；</span><br><span class="line">--cpuset=&quot;0-2&quot; or --cpuset=&quot;0,1,2&quot;: 绑定容器到指定CPU运行；</span><br><span class="line">-m :设置容器使用内存最大值；</span><br><span class="line">--net=&quot;bridge&quot;: 指定容器的网络连接类型，支持 bridge/host/none/container: 四种类型；</span><br><span class="line">--link=[]: 添加链接到另一个容器；</span><br><span class="line">--expose=[]: 开放一个端口或一组端口；</span><br><span class="line">--volume , -v: 绑定一个卷</span><br><span class="line"></span><br><span class="line">-p支持以下几种绑定格式：</span><br><span class="line">// 绑定宿主机IP及端口</span><br><span class="line">ip:hostPort:containerPort</span><br><span class="line">// 绑定宿主机IP</span><br><span class="line">ip::containerPort</span><br><span class="line">// 绑定宿主机端口</span><br><span class="line">hostPort:containerPort</span><br></pre></td></tr></table></figure>
+
+<h1 id="Docker-疑难解答"><a href="#Docker-疑难解答" class="headerlink" title="Docker 疑难解答"></a>Docker 疑难解答</h1><h1 id="1、Docker-磁盘空间不足解决办法"><a href="#1、Docker-磁盘空间不足解决办法" class="headerlink" title="1、Docker 磁盘空间不足解决办法"></a>1、Docker 磁盘空间不足解决办法</h1><p>修改默认镜像存储目录的软连接</p>
+<p>检查空间，一般是这个位置 &#x2F;var&#x2F;lib&#x2F;docker&#x2F; 的空间不足</p>
+<p><code>du -sh /var/lib/docker/</code></p>
+<h3 id="1-1-停止docker"><a href="#1-1-停止docker" class="headerlink" title="1.1 停止docker"></a>1.1 停止docker</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-2-创建目录"><a href="#1-2-创建目录" class="headerlink" title="1.2 创建目录"></a>1.2 创建目录</h3><p>创建目录 &#x2F;data&#x2F;docker&#x2F;lib</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir -p /data/docker/lib</span><br></pre></td></tr></table></figure>
+
+<p>找一个磁盘剩余空间比较多的位置</p>
+<h3 id="1-3-迁移文件"><a href="#1-3-迁移文件" class="headerlink" title="1.3 迁移文件"></a>1.3 迁移文件</h3><p>迁移 &#x2F;var&#x2F;lib&#x2F;docker 目录下面的文件到 &#x2F;data&#x2F;docker&#x2F;lib迁移后的完成docker路径：&#x2F;data&#x2F;docker&#x2F;lib</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rsync -avz /var/lib/docker/ /data/docker/lib/</span><br></pre></td></tr></table></figure>
+
+<p>迁移完成之后，检查目标目录下的文件是否与源目录一致</p>
+<h3 id="1-4-修改配置文件"><a href="#1-4-修改配置文件" class="headerlink" title="1.4 修改配置文件"></a>1.4 修改配置文件</h3><p>方法一：编辑文件 vi &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;docker.service 修改为如下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Service]</span><br><span class="line">ExecStart=/usr/bin/dockerd --gragh=/data/docker/lib</span><br></pre></td></tr></table></figure>
+
+<p>方法二：编辑 &#x2F;etc&#x2F;docker&#x2F;daemon.json 根节点添加如下参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> ...</span><br><span class="line"> &quot;graph&quot;:&quot;/data/docker/lib&quot;</span><br><span class="line"> ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-重启服务"><a href="#1-5-重启服务" class="headerlink" title="1.5 重启服务"></a>1.5 重启服务</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-查看docker信息"><a href="#1-6-查看docker信息" class="headerlink" title="1.6 查看docker信息"></a>1.6 查看docker信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker info</span><br></pre></td></tr></table></figure>
+
+<p>检查结果中的 Docker Root Dir 是否为设置的 gragh 路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# docker info</span><br><span class="line">...</span><br><span class="line">Docker Root Dir: &quot;/data/docker/lib&quot;</span><br><span class="line">Debug Mode (client): false</span><br><span class="line">Debug Mode (server): false</span><br><span class="line">Registry: https://index.docker.io/v1/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-查看images信息"><a href="#1-7-查看images信息" class="headerlink" title="1.7 查看images信息"></a>1.7 查看images信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker images</span><br></pre></td></tr></table></figure>
+
+<p>如果images不完整，检查gragh的路径是否合理</p>
+<p>可选择：成功之后可以删除原来的docker存储镜像的位置 &#x2F;var&#x2F;lib&#x2F;docker</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/docker/" rel="tag"># docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/04/firewall_setting/" rel="prev" title="iptables/firewall 防火墙">
+                  <i class="fa fa-chevron-left"></i> iptables/firewall 防火墙
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/04/Git_base/" rel="next" title="Git 操作">
+                  Git 操作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">京ICP备15059731号 </a>
+      <img src="http://www.beian.gov.cn/portal/download" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=%E4%BA%ACICP%E5%A4%8715059731%E5%8F%B7-1" rel="noopener" target="_blank">京ICP备15059731号-1 </a>
+  </div>
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">十九号快递员</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
