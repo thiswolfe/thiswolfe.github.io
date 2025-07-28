@@ -1,0 +1,324 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixPut - I'm Here.</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4361EE',
+            secondary: '#FF6B6B',
+            accent: '#FFD166',
+            dark: '#2B2D42',
+            light: '#F8F9FA'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            poppins: ['Poppins', 'sans-serif']
+          },
+        },
+      }
+    }
+  </script>
+
+  <!-- 自定义样式 -->
+  <style>
+    body,
+    html {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      transition: all 0.5s ease;
+    }
+
+    /* 响应式字体大小 */
+    @media (max-width: 640px) {
+      .text-[clamp(1.5rem,4vw,2.5rem)] {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* 平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 卡片样式优化 */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-light text-dark flex flex-col min-h-screen">
+  <!-- 随机圆形背景 -->
+  <div id="circles"></div>
+
+  <section id="discover" class="flex-grow flex items-center justify-center bg-white py-6">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-6">
+        <h2 class="text-[clamp(1.5rem,4vw,2.5rem)] font-poppins font-bold text-dark mb-3">你好 ・ 我在</h2>
+        <div class="w-16 h-1 bg-primary mx-auto mb-3"></div>
+        <p id="hitokoto"  class="text-base text-gray-600 max-w-md mx-auto">
+				  <a href="#" id="hitokoto_text">白首书千卷，朱颜酒一杯</a>
+				</p>
+				<script>
+				  fetch('https://v1.hitokoto.cn')
+				    .then(response => response.json())
+				    .then(data => {
+				      const hitokoto = document.querySelector('#hitokoto_text')
+				      hitokoto.href = `https://hitokoto.cn/?uuid=${data.uuid}`
+				      hitokoto.innerText = data.hitokoto
+				    })
+				    .catch(console.error)
+				</script>
+        
+      </div>
+
+      <!-- 卡片 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+        <!-- 卡片 -->
+        <a href="guess.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-tree text-green-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">猜数字</h3>
+            <p class="text-xs sm:text-sm text-gray-500">在0-100中随机猜数字，猜中了有惊喜哦~</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="sudoku.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-camera text-purple-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">数独</h3>
+            <p class="text-xs sm:text-sm text-gray-500">我们的目标是，用1到9的数字填补所有空白</p>
+          </div>
+        </a>
+        
+        <!-- 卡片 -->
+        <a href="fortune.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-hiking text-orange-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">好运来</h3>
+            <p class="text-xs sm:text-sm text-gray-500">祝你一切安好，万事顺遂</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="javascript:void(0);" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center device-redirect"
+          data-base-href="spark">
+          <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-ship text-indigo-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">星空烟火</h3>
+            <p class="text-xs sm:text-sm text-gray-500">是谁把光阴剪成了烟花，演绎那一瞬间的繁华</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="flipBrand.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-snowflake-o text-teal-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">翻牌子</h3>
+            <p class="text-xs sm:text-sm text-gray-500">快一点，找出相同或相似的图案吧</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="date.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-hiking text-orange-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">日期计算</h3>
+            <p class="text-xs sm:text-sm text-gray-500">帮我算出出生至今一共活了多少天</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="check.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-hiking text-orange-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">Emoji</h3>
+            <p class="text-xs sm:text-sm text-gray-500">找到那个你最喜欢的小表情吧!</p>
+          </div>
+        </a>
+
+        <!-- 卡片 -->
+        <a href="calc.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-hiking text-orange-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">收益计算</h3>
+            <p class="text-xs sm:text-sm text-gray-500">算算我们能挣多少钱吧~</p>
+          </div>
+        </a>
+        
+        <!-- 卡片 -->
+        <a href="tarot.html" class="group card block bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm p-4 flex items-center">
+          <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mr-4 flex-shrink-0">
+            <i class="fa fa-hiking text-orange-600 text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-semibold text-dark group-hover:text-primary transition-colors">塔罗占卜</h3>
+            <p class="text-xs sm:text-sm text-gray-500">来算算桃花什么时候开吧</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="py-2 border-t border-gray-100">
+    <div class="container mx-auto px-4">
+      <a href="https://beian.miit.gov.cn/">
+        <p class="text-center text-gray-500 text-xs transition-colors hover:text-primary">
+          Fixput &copy; 2025 京ICP备2024055092号-2
+        </p>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const links = document.querySelectorAll('.device-redirect');
+      links.forEach(link => {
+        link.addEventListener('click', function () {
+          const baseHref = this.getAttribute('data-base-href');
+          redirectBasedOnDevice(baseHref);
+        });
+      });
+    });
+
+    function redirectBasedOnDevice(baseHref) {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobile = /mobile|android|iphone|ipad|ipod/i.test(userAgent);
+      const extension = isMobile ? '_m.html' : '.html';
+
+      window.location.href = baseHref + extension;
+    }
+  </script>
+
+  <script>
+    // 创建随机圆形背景
+    function createCircles() {
+      const colors = [
+        'rgba(67, 97, 238, 0.1)',   // primary 淡色
+        'rgba(255, 107, 107, 0.1)',  // secondary 淡色
+        'rgba(255, 209, 102, 0.1)',  // accent 淡色
+        'rgba(43, 45, 66, 0.1)',     // dark 淡色
+        'rgba(248, 249, 250, 0.3)'   // light 淡色
+      ];
+      const circlesContainer = document.getElementById('circles');
+      const numCircles = window.innerWidth < 640 ? 8 : 12; // 小屏幕减少圆形数量
+
+      // 清空现有圆形
+      circlesContainer.innerHTML = '';
+
+      for (let i = 0; i < numCircles; i++) {
+        const circle = document.createElement('div');
+        circle.classList.add('circle');
+
+        // 根据屏幕尺寸调整圆形大小
+        const baseSize = window.innerWidth < 640 ? 20 : 40;
+        const size = Math.random() * baseSize + baseSize; // 随机大小
+
+        // 确保圆形不会超出视口
+        const x = Math.random() * (window.innerWidth - size);
+        const y = Math.random() * (window.innerHeight - size);
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        circle.style.width = `${size}px`;
+        circle.style.height = `${size}px`;
+        circle.style.left = `${x}px`;
+        circle.style.top = `${y}px`;
+        circle.style.backgroundColor = color;
+        circle.style.opacity = Math.random() * 0.3 + 0.1; // 透明度 0.1-0.4
+
+        circlesContainer.appendChild(circle);
+      }
+    }
+
+    // 随机旅行相关图标列表
+    const travelIcons = [
+      'fa-plane', 'fa-ship', 'fa-car', 'fa-bus', 'fa-train',
+      'fa-camera', 'fa-map-o', 'fa-compass', 'fa-globe', 'fa-suitcase',
+      'fa-bed', 'fa-utensils', 'fa-coffee', 'fa-umbrella', 'fa-sun-o',
+      'fa-moon-o', 'fa-tree', 'fa-mountain', 'fa-hiking', 'fa-campground',
+      'fa-life-ring', 'fa-anchor', 'fa-bicycle', 'fa-snowflake-o', 'fa-map-marker'
+    ];
+
+    // 为每个卡片分配随机图标
+    document.addEventListener('DOMContentLoaded', function () {
+      const cards = document.querySelectorAll('.grid a');
+
+      cards.forEach(card => {
+        // 跳过前4个已经有图标的卡片
+        if (Array.from(cards).indexOf(card) < 4) return;
+
+        const randomIcon = travelIcons[Math.floor(Math.random() * travelIcons.length)];
+        const iconContainer = card.querySelector('.rounded-full');
+        const iconColorClass = getRandomColorClass();
+
+        // 移除旧图标
+        iconContainer.innerHTML = '';
+
+        // 创建新图标元素
+        const icon = document.createElement('i');
+        icon.className = `fa ${randomIcon} ${iconColorClass} text-lg`;
+
+        // 添加新图标
+        iconContainer.appendChild(icon);
+      });
+    });
+
+    // 获取随机颜色类
+    function getRandomColorClass() {
+      const colorClasses = [
+        'text-primary', 'text-secondary', 'text-accent',
+        'text-green-600', 'text-purple-600', 'text-indigo-600',
+        'text-teal-600', 'text-orange-600'
+      ];
+      return colorClasses[Math.floor(Math.random() * colorClasses.length)];
+    }
+
+    // 初始创建圆形
+    createCircles();
+
+    // 窗口大小变化时重新创建圆形
+    window.addEventListener('resize', createCircles);
+  </script>
+</body>
+
+</html>
